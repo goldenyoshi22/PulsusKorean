@@ -133,6 +133,15 @@ var kids = [
         "notes": 522
     },
     {
+        "kid": 23,
+        "name": "Crazy Frog",
+        "difficulty": 9.5,
+        "skill": "Speed",
+        "id": 10148,
+        "author": "shianara",
+        "notes": 2222
+    },
+    {
         "kid": 9,
         "name": "XNOR XNOR XNOR",
         "difficulty": 10,
@@ -151,15 +160,6 @@ var kids = [
         "notes": 3140
     },
     {
-        "kid": 23,
-        "name": "Crazy Frog",
-        "difficulty": 10,
-        "skill": "Speed",
-        "id": 10148,
-        "author": "shianara",
-        "notes": 2222
-    },
-    {
         "kid": 4,
         "name": "Air",
         "difficulty": 10.5,
@@ -167,6 +167,15 @@ var kids = [
         "id": 11525,
         "author": "balisto",
         "notes": 1673
+    },
+    {
+        "kid": 24,
+        "name": "Crystal Gravity",
+        "difficulty": 10.5,
+        "skill": "?",
+        "id": 13943,
+        "author": "Lilyyy",
+        "notes": 6613
     },
     {
         "kid": 6,
@@ -184,7 +193,7 @@ var kids = [
         "skill": "Tech",
         "id": 12508,
         "author": "Pongeebob",
-        "notes": 1522
+        "notes": 1663
     },
     {
         "kid": 3,
@@ -211,4 +220,107 @@ var kids = [
         "id": 11560,
         "author": "Lilyyy"
     },
+    {
+        "kid": 25,
+        "name": "Mighty Little Man",
+        "difficulty": 2.5,
+        "skill": "Speed",
+        "id": 10263,
+        "author": "AFS",
+        "notes": 87
+    },
+    {
+        "kid": 26,
+        "name": "Bakuure! Match Uri no Haken Shoujo - Extra",
+        "difficulty": 7.5,
+        "skill": "Tech",
+        "id": 8611,
+        "author": "mtgufo",
+        "notes": 1045
+    },
+    {
+        "kid": 27,
+        "name": "VULTURE",
+        "difficulty": 12.5,
+        "skill": "Stamina",
+        "id": 2172,
+        "author": "YouCanNotKnow",
+        "notes": 4145
+    },
+    {
+        "kid": 28,
+        "name": "najimi breakers",
+        "difficulty": 14.5,
+        "skill": "?",
+        "id": 12328,
+        "author": "Everiz",
+        "notes": 1986
+    },
+    {
+        "kid": 29,
+        "name": "Twinkle Parade",
+        "difficulty": 5,
+        "skill": "Speed",
+        "id": 15660,
+        "author": "Lilyyy",
+        "notes": 653
+    },
+    {
+        "kid": 30,
+        "name": "Crazy Loop [Hyper]",
+        "difficulty": 3,
+        "skill": "?",
+        "id": 13743,
+        "author": "AFS",
+        "notes": 305
+    },
+    {
+        "kid": 31,
+        "name": "Cory in the House [Expert]",
+        "difficulty": 4,
+        "skill": "Chords",
+        "id": 13812,
+        "author": "AFS",
+        "notes": 303
+    },
+    {
+        "kid": 32,
+        "name": "EVERYBODY DO THE FLOP [EXPERT]",
+        "difficulty": 5.5,
+        "skill": "Speed(?)",
+        "id": 8519,
+        "author": "AFS",
+        "notes": 964
+    },
+    {
+        "kid": 33,
+        "name": "ISSUE 480",
+        "difficulty": 9,
+        "skill": "Speed",
+        "id": 12580,
+        "author": "Koishi",
+        "notes": 1272
+    },
+    {
+        "kid": 34,
+        "name": "Unplanned Pregnancy // CATASTROPHIC FAILURE",
+        "difficulty": 7.5,
+        "skill": "Speed",
+        "id": 13287,
+        "author": "shianara",
+        "notes": 351
+    }
 ]
+
+var sortedKids = [];
+
+function sortKids(method) {
+	sortedKids = [];
+	switch (method) {
+		case "difficulty":
+		sortedKids = kids.toSorted(function(a, b) {return a.difficulty - b.difficulty});
+		break;
+	}
+}
+
+sortKids("difficulty");

@@ -19,13 +19,44 @@ var difficultyColors = [
 ["#000000", "#666666"], //17
 ]
 
-for (let i = 0; i < kids.length; i++) {
-	document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${kids[i].id}</td><td>${kids[i].name}</td><td>${kids[i].author}</td>
-	<th style="${kids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(kids[i].difficulty)][0]};color:${difficultyColors[Math.floor(kids[i].difficulty)][1]};">${kids[i].difficulty}</td>
-	<td>${kids[i].skill}</td></tr>`
+function initAwardedMaps() {
+	document.getElementById("awardedMapsTable").innerHTML == `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th></tr>`
+	for (let i = 0; i < sortedKids.length; i++) {
+		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td>${kids[i].name}</td><td>${sortedKids[i].author}</td>
+		<td style="${sortedKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(sortedKids[i].difficulty)][0]};color:${difficultyColors[Math.floor(sortedKids[i].difficulty)][1]};">${sortedKids[i].difficulty}</td>
+		<td>${sortedKids[i].skill}</td></tr>`
+	}
 }
 
+initAwardedMaps();
+
 for (let i = 0; i < users.length; i++) {
-	document.getElementById("leaderboardTable").innerHTML += `<tr><td>#${i + 1}</td><td>${users[i].username}</td><td>${users[i].pulse.toFixed(3)}</td>
-	<td>${kids[users[i].scores[0].kid].name} ~ ${users[i].scores[0].pulse.toFixed(3)}p</td></tr>`
+	document.getElementById("leaderboardTable").innerHTML += `<tr><td>#${i + 1}</td><td><u style="cursor:pointer;" onclick='showUserProfile(${JSON.stringify(users[i])})'>${users[i].username}</u></td><td>${users[i].pulse.toFixed(3)}p</td>
+	<td>${kids[users[i].scores[0].kid].name} ~ ${users[i].scores[0].pulse.toFixed(3)}p (${(users[i].scores[0].accuracy * 100).toFixed(3)}%)</td></tr>`
+}
+
+function showUserProfile(targetUser) {
+	console.log(targetUser);
+	if (typeof targetUser == "string") targetUser = JSON.parse(targetUser);
+	
+	document.getElementById("profileInfo").innerHTML = `
+	<h3>${targetUser.username} - #?</h3>
+	Pulse: ${targetUser.pulse.toFixed(3)}p
+	`
+	
+	let pendHTML = `<table><tr><th>Map</th><th>Difficulty</th><th>Accuracy</th><th>Pulse</th></tr>`
+	
+	for (let i = 0; i < targetUser.scores.length; i++) {
+		let currentScore = targetUser.scores[i]
+		pendHTML += `
+		<tr>
+		<td>${kids[currentScore.kid].name}</td>
+		<td style="${kids[currentScore.kid].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(kids[currentScore.kid].difficulty)][0]};color:${difficultyColors[Math.floor(kids[currentScore.kid].difficulty)][1]};">${kids[currentScore.kid].difficulty}</td>
+		<td>${(currentScore.accuracy * 100).toFixed(3)}%</td>
+		<td>${currentScore.pulse.toFixed(3)}p</td>
+		</tr>
+		`
+	}
+	
+	document.getElementById("profileScores").innerHTML = `${pendHTML}</table>`;
 }

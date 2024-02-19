@@ -18,11 +18,27 @@ th, td {
   text-align: center;
 }
 
-tr:nth-child(even) {
-    background-color: #000000;
+tbody:nth-child(odd) {
+    background-color: #00000030;
 }
 
 table {
 	border: 2px solid white;
 	border-collapse: collapse;
 }
+
+.container {
+	display: grid;
+	grid-template-columns: 0.9fr 0.8fr 1.3fr;
+	grid-template-rows: 0.5fr 0.5fr 2fr;
+	gap: 0px 0px;
+	grid-auto-flow: row;
+	grid-template-areas:
+		"profilePic info scores"
+		"profilePic info scores"
+		". . scores";
+}
+
+.profilePic { grid-area: profilePic; }
+.info { grid-area: info; }
+.scores { grid-area: scores; }
