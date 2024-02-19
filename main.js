@@ -22,7 +22,7 @@ var difficultyColors = [
 function initAwardedMaps() {
 	document.getElementById("awardedMapsTable").innerHTML == `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th></tr>`
 	for (let i = 0; i < sortedKids.length; i++) {
-		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td>${kids[i].name}</td><td>${sortedKids[i].author}</td>
+		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td>${sortedKids[i].name}</td><td>${sortedKids[i].author}</td>
 		<td style="${sortedKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(sortedKids[i].difficulty)][0]};color:${difficultyColors[Math.floor(sortedKids[i].difficulty)][1]};">${sortedKids[i].difficulty}</td>
 		<td>${sortedKids[i].skill}</td></tr>`
 	}

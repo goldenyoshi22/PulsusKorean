@@ -81,7 +81,8 @@ var kidScores = [
     {
         "kid": 23,
         "title": "Crazy Frog",
-        "score0": "goldenyoshi22/1581,420,116,46,59"
+        "score0": "goldenyoshi22/1581,420,116,46,59",
+        "score1": "shianara/893,680,598,51,0"
     },
     {
         "kid": 9,
