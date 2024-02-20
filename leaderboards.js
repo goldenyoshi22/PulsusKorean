@@ -60,13 +60,15 @@ var kidScores = [
         "title": "Made of Fire",
         "score0": "Sep/499,104,25,0,4",
         "score1": "methanal/575,55,2,0,0",
-        "score2": "AFS/352,169,76,14,21"
+        "score2": "AFS/352,169,76,14,21",
+        "score3": "goldenyoshi22/554,65,10,0,3"
     },
     {
         "kid": 1,
         "title": "Three eyes ~ awa...",
         "score0": "Sep/938,216,30,6,6",
-        "score1": "methanal/953,206,39,6,8"
+        "score1": "methanal/953,206,39,6,8",
+        "score2": "goldenyoshi22/824,246,70,21,31"
     },
     {
         "kid": 12,
@@ -81,8 +83,9 @@ var kidScores = [
     {
         "kid": 23,
         "title": "Crazy Frog",
-        "score0": "goldenyoshi22/1581,420,116,46,59",
-        "score1": "shianara/893,680,598,51,0"
+        "score0": "goldenyoshi22/1711,394,65,24,28",
+        "score1": "shianara/893,680,598,51,0",
+        "score2": "Lilyyy/918,762,373,49,120"
     },
     {
         "kid": 9,
@@ -112,7 +115,8 @@ var kidScores = [
     {
         "kid": 17,
         "title": "Ringo's Tea Party",
-        "score0": "methanal/1267,351,28,5,12"
+        "score0": "methanal/1267,351,28,5,12",
+        "score1": "Lilyyy/953,394,188,42,86"
     },
     {
         "kid": 3,
@@ -133,12 +137,14 @@ var kidScores = [
     },
     {
         "kid": 26,
-        "title": "Bakuure! Match Uri no Haken Shoujo - Extra"
+        "title": "Bakuure! Match Uri no Haken Shoujo - Extra",
+        "score0": "AFS/601,334,83,13,14"
     },
     {
         "kid": 27,
         "title": "VULTURE",
-        "score0": "methanal/3178,810,120,11,26"
+        "score0": "methanal/3178,810,120,11,26",
+        "score1": "AFS/1853,935,813,209,335"
     },
     {
         "kid": 28,
@@ -165,12 +171,15 @@ var kidScores = [
         "kid": 33,
         "title": "ISSUE 480",
         "score0": "shianara/713,464,92,3,0",
-        "score1": "methanal/1077,173,18,2,2"
+        "score1": "methanal/1077,173,18,2,2",
+        "score2": "goldenyoshi22/913,274,47,6,32",
+        "score3": "Lilyyy/928,232,91,7,14"
     },
     {
         "kid": 34,
         "title": "Unplanned Pregnancy // CATASTROPHIC FAILURE",
-        "score0": "goldenyoshi22/231,95,21,4,0"
+        "score0": "goldenyoshi22/231,95,21,4,0",
+        "score1": "methanal/290,56,4,0,1"
     }
 ]
 
