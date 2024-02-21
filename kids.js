@@ -100,7 +100,7 @@ var kids = [
     {
         "kid": 11,
         "name": "Made of Fire",
-        "difficulty": 8,
+        "difficulty": 6,
         "skill": "Jacks",
         "id": 3818,
         "author": "Loopy",
@@ -144,8 +144,8 @@ var kids = [
     {
         "kid": 9,
         "name": "XNOR XNOR XNOR",
-        "difficulty": 10,
-        "skill": "?",
+        "difficulty": 11,
+        "skill": "XNOR",
         "id": 10101,
         "author": "balisto",
         "notes": 3258
@@ -312,9 +312,32 @@ var kids = [
     }
 ]
 
+function sheetsToKids() {
+	kids = [];
+	return new Promise((resolve, reject) => {
+	fetch("https://sheets.googleapis.com/v4/spreadsheets/1pvhP4uQHJgJMWlVNRFp8KcdKpGm0AaoxDbfiyuY5PEU/values/maps?key=AIzaSyBgkDt4b932s18UsDfSMhrbopwqQwn6H1w")
+	.then(response => response.json())
+	.then(data => {
+		for (let i = 1; i < data.values.length; i++) {
+			kids.push({
+				"kid": parseInt(data.values[i][0]),
+				"name": data.values[i][1],
+				"difficulty": parseFloat(data.values[i][2]),
+				"skill": data.values[i][3],
+				"id": parseInt(data.values[i][4]),
+				"author": data.values[i][5],
+				"notes": parseInt(data.values[i][6]),
+			})
+		} 
+	}).then(kids => {
+		resolve(kids);
+	})
+	});
+}
+
 var sortedKids = [];
 
-function sortKids(method) {
+async function sortKids(method) {
 	sortedKids = [];
 	switch (method) {
 		case "difficulty":
@@ -322,5 +345,3 @@ function sortKids(method) {
 		break;
 	}
 }
-
-sortKids("difficulty");
