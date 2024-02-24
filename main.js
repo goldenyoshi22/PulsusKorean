@@ -27,7 +27,8 @@ async function initAll() {
 	for (let i = 0; i < sortedKids.length; i++) {
 		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td>${sortedKids[i].name}</td><td>${sortedKids[i].author}</td>
 		<td style="${sortedKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][1]};">${sortedKids[i].difficulty}</td>
-		<td>${sortedKids[i].skill}</td></tr>`
+		<td>${sortedKids[i].skill}</td>
+		<td>${isNaN(sortedKids[i].notes) ? "?" : sortedKids[i].notes}</td></tr>`
 	}
 for (let i = 0; i < kidScores.length; i++) {
 	kidScores[i].scores = [];
@@ -54,6 +55,7 @@ for (let i = 0; i < kidScores.length; i++) {
 	}
 	users = users.sort(function(a, b){return b.pulse - a.pulse})
 	for (let i = 0; i < users.length; i++) {
+		users[i].rank = i+1;
 		document.getElementById("leaderboardTable").innerHTML += `<tr><td>#${i + 1}</td><td><u style="cursor:pointer;" onclick='showUserProfile(${JSON.stringify(users[i])})'>${users[i].username}</u></td><td>${users[i].pulse.toFixed(3)}p</td>
 		<td>${kids[users[i].scores[0].kid].name} ~ ${users[i].scores[0].pulse.toFixed(3)}p (${(users[i].scores[0].accuracy * 100).toFixed(3)}%)</td></tr>`
 	};
@@ -89,7 +91,7 @@ function showUserProfile(targetUser) {
 	if (typeof targetUser == "string") targetUser = JSON.parse(targetUser);
 	
 	document.getElementById("profileInfo").innerHTML = `
-	<h3>${targetUser.username} - #?</h3>
+	<h3>${targetUser.username} - #${targetUser.rank}</h3>
 	Pulse: ${typeof targetUser.pulse != "number" ? "???" : targetUser.pulse.toFixed(3)}p
 	`
 	

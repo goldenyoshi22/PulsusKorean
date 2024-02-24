@@ -214,7 +214,7 @@ function calculate(kid, hits, type = "pulse") {
 	//console.log(diff, notes, hits, acc)
 	switch (type) {
 		case "pulse":
-		return ((5 * ((1.4 ** diff) * (Math.min(notes, 3737) ** 0.1))) ** (acc)) * Math.min(notes/500, 1)
+		return ((0.8 * ((11 ** Math.log(diff)) * (notes ** 0.1))) ** (acc)) * Math.min(notes/500, 1)
 		break;
 		
 		case "accuracy":
