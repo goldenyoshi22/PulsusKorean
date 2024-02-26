@@ -23,7 +23,7 @@ async function initAll() {
 	await sheetsToKids();
 	await sheetsToScores();
 	sortKids("difficulty");
-	document.getElementById("awardedMapsTable").innerHTML == `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th></tr>`
+	document.getElementById("awardedMapsTable").innerHTML = `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th></tr>`
 	for (let i = 0; i < sortedKids.length; i++) {
 		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td>${sortedKids[i].name}</td><td>${sortedKids[i].author}</td>
 		<td style="${sortedKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][1]};">${sortedKids[i].difficulty}</td>
@@ -33,9 +33,80 @@ async function initAll() {
 for (let i = 0; i < kidScores.length; i++) {
 	kidScores[i].scores = [];
 	for (let k = 0; kidScores[i]["score" + k] != undefined; k++) {
-		kidScores[i].scores.push({username: kidScores[i]["score" + k].split("/")[0], hits: kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)}), kid: kidScores[i].kid,
+		kidScores[i].scores.push({username: kidScores[i]["score" + k].split("/")[0], mods: kidScores[i]["score" + k].split("/")[2] == undefined ? undefined : kidScores[i]["score" + k].split("/")[2].split(","), hits: kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)}), kid: kidScores[i].kid,
 		pulse: calculate(i, kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)})),
 		accuracy: calculate(i, kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)}), "accuracy")})
+		
+		//mods
+		/*
+		bpm:
+		pulse^bpm if <1x
+		pulse*bpm if >=1x
+
+		fs:
+		if 0.8x or less, 1.03x
+		if 0.5x or less, 1.06x
+
+		hw:
+		pulse / hw if hw > 1
+		pulse / (hw^0.5) if hw <= 1
+
+		at: nuh uh
+		nf: 0.8x
+		nr: 0.8x
+		hd: 1.02x
+		fl: 1.1x
+		rd: Math.random() * 1.2 (jk)
+		*/
+		if (kidScores[i].scores[k].mods != undefined) {
+			finalMult = 1;
+			finalString = "";
+			console.log(kidScores[i].scores[k]);
+				let modArray = kidScores[i].scores[k].mods;
+			for (let modIndex = 0; modIndex < modArray.length; modIndex++) {
+				if (modArray[modIndex].startsWith("bpm")) {
+					let bpmMod = modArray[modIndex].slice(3);
+					if (bpmMod >= 1) finalMult *= bpmMod;
+					else finalMult **= bpmMod;
+					finalString += `BPM ${bpmMod}x, `
+				}
+				if (modArray[modIndex].startsWith("fs")) {
+					let fsMod = modArray[modIndex].slice(2);
+					if (fsMod <= 0.5) finalMult *= 1.06;
+					else if (fsMod <= 0.8) finalMult *= 1.03;
+					finalString += `FS ${fsMod}x, `
+				}
+				if (modArray[modIndex].startsWith("hw")) {
+					let hwMod = modArray[modIndex].slice(2);
+					if (hwMod > 1) finalMult /= hwMod;
+					else finalMult /= (hwMod ** 0.5);
+					finalString += `HW ${hwMod}x, `
+				}
+				if (modArray[modIndex] == "nf") {
+					finalMult *= 0.8;
+					finalString += `NF, `
+				}
+				if (modArray[modIndex] == "nr") {
+					finalMult *= 0.8;
+					finalString += `NR, `
+				}
+				if (modArray[modIndex] == "hd") {
+					finalMult *= 1.02;
+					finalString += `HD, `
+				}
+				if (modArray[modIndex] == "fl") {
+					finalMult *= 1.1;
+					finalString += `FL, `
+				}
+			}
+			kidScores[i].scores[k].modMult = finalMult;
+			kidScores[i].scores[k].modInfo = finalString.slice(0, finalString.length - 2);
+		} else {
+			kidScores[i].scores[k].modMult = 1;
+			kidScores[i].scores[k].modInfo = "";
+		}
+		kidScores[i].scores[k].pulse *= kidScores[i].scores[k].modMult;
+		
 		let userNames = [];
 		for (let m = 0; m < users.length; m++) {
 			userNames.push(users[m].username);
@@ -57,7 +128,7 @@ for (let i = 0; i < kidScores.length; i++) {
 	for (let i = 0; i < users.length; i++) {
 		users[i].rank = i+1;
 		document.getElementById("leaderboardTable").innerHTML += `<tr><td>#${i + 1}</td><td><u style="cursor:pointer;" onclick='showUserProfile(${JSON.stringify(users[i])})'>${users[i].username}</u></td><td>${users[i].pulse.toFixed(3)}p</td>
-		<td>${kids[users[i].scores[0].kid].name} ~ ${users[i].scores[0].pulse.toFixed(3)}p (${(users[i].scores[0].accuracy * 100).toFixed(3)}%)</td></tr>`
+		<td>${kids[users[i].scores[0].kid].name} ${users[i].scores[0].modInfo == "" ? "" : "[" + users[i].scores[0].modInfo + "]"} ~ ${users[i].scores[0].pulse.toFixed(3)}p (${(users[i].scores[0].accuracy * 100).toFixed(3)}%)</td></tr>`
 	};
 }
 
@@ -73,7 +144,7 @@ function initAwardedMaps() {
 function initUserDisplay() {
 	for (let i = 0; i < users.length; i++) {
 		document.getElementById("leaderboardTable").innerHTML += `<tr><td>#${i + 1}</td><td><u style="cursor:pointer;" onclick='showUserProfile(${JSON.stringify(users[i])})'>${users[i].username}</u></td><td>${users[i].pulse.toFixed(3)}p</td>
-		<td>${kids[users[i].scores[0].kid].name} ~ ${users[i].scores[0].pulse.toFixed(3)}p (${(users[i].scores[0].accuracy * 100).toFixed(3)}%)</td></tr>`
+		<td>${kids[users[i].scores[0].kid].name} ${users[i].scores[0].modInfo == "" ? "" : "[" + users[i].scores[0].modInfo + "]"} ~ ${users[i].scores[0].pulse.toFixed(3)}p (${(users[i].scores[0].accuracy * 100).toFixed(3)}%)</td></tr>`
 	};
 }
 
@@ -95,7 +166,7 @@ function showUserProfile(targetUser) {
 	Pulse: ${typeof targetUser.pulse != "number" ? "???" : targetUser.pulse.toFixed(3)}p
 	`
 	
-	let pendHTML = `<table><tr><th>Map</th><th>Difficulty</th><th>Accuracy</th><th>Pulse</th></tr>`
+	let pendHTML = `<table><tr><th>Map</th><th>Difficulty</th><th>Accuracy</th><th>Pulse</th><th>Mods</th></tr>`
 	
 	for (let i = 0; i < targetUser.scores.length; i++) {
 		let currentScore = targetUser.scores[i]
@@ -105,6 +176,7 @@ function showUserProfile(targetUser) {
 		<td style="${kids[currentScore.kid].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(kids[currentScore.kid].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(kids[currentScore.kid].difficulty, 0))][1]};">${kids[currentScore.kid].difficulty}</td>
 		<td>${(currentScore.accuracy * 100).toFixed(3)}%</td>
 		<td>${currentScore.pulse.toFixed(3)}p</td>
+		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "" : "(" + currentScore.modMult.toFixed(3) + "x)"}</td>
 		</tr>
 		`
 	}
