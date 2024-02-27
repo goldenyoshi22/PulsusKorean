@@ -23,7 +23,7 @@ async function initAll() {
 	await sheetsToKids();
 	await sheetsToScores();
 	sortKids("difficulty");
-	document.getElementById("awardedMapsTable").innerHTML = `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th></tr>`
+	document.getElementById("awardedMapsTable").innerHTML = `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`
 	for (let i = 0; i < sortedKids.length; i++) {
 		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td>${sortedKids[i].name}</td><td>${sortedKids[i].author}</td>
 		<td style="${sortedKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][1]};">${sortedKids[i].difficulty}</td>
@@ -40,7 +40,7 @@ for (let i = 0; i < kidScores.length; i++) {
 		//mods
 		/*
 		bpm:
-		pulse^bpm if <1x
+		pulse*((5 ^ bpm)/5) if <1x
 		pulse*bpm if >=1x
 
 		fs:
@@ -67,7 +67,7 @@ for (let i = 0; i < kidScores.length; i++) {
 				if (modArray[modIndex].startsWith("bpm")) {
 					let bpmMod = modArray[modIndex].slice(3);
 					if (bpmMod >= 1) finalMult *= bpmMod;
-					else finalMult **= bpmMod;
+					else finalMult *= ((5 ** bpmMod) / 5);
 					finalString += `BPM ${bpmMod}x, `
 				}
 				if (modArray[modIndex].startsWith("fs")) {
@@ -133,11 +133,12 @@ for (let i = 0; i < kidScores.length; i++) {
 }
 
 function initAwardedMaps() {
-	document.getElementById("awardedMapsTable").innerHTML == `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th></tr>`
+	document.getElementById("awardedMapsTable").innerHTML = `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`
 	for (let i = 0; i < sortedKids.length; i++) {
 		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td>${sortedKids[i].name}</td><td>${sortedKids[i].author}</td>
 		<td style="${sortedKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][1]};">${sortedKids[i].difficulty}</td>
-		<td>${sortedKids[i].skill}</td></tr>`
+		<td>${sortedKids[i].skill}</td>
+		<td>${isNaN(sortedKids[i].notes) ? "?" : sortedKids[i].notes}</td></tr>`
 	}
 }
 

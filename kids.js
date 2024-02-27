@@ -344,6 +344,10 @@ async function sortKids(method) {
 		sortedKids = kids.toSorted(function(a, b) {return a.difficulty - b.difficulty});
 		break;
 		
+		case "notes":
+		sortedKids = kids.toSorted(function(a, b) {return a.notes - b.notes});
+		break;
+		
 		case "skillset":
 		sortedKids = kids.toSorted(function(a, b) {return a.difficulty - b.difficulty});
 		sortedKids.sort(function(a, b) {return a.skill.localeCompare(b.skill)});
