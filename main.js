@@ -119,7 +119,7 @@ for (let i = 0; i < kidScores.length; i++) {
 };
 	var topPlayMults = [1.00, 0.98, 0.96, 0.94, 0.92, 0.90, 0.86, 0.82, 0.78, 0.74, 0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05]
 	for (let i = 0; i < users.length; i++) {
-		users[i].scores = users[i].scores.sort(function(a, b){return calculate(b.kid, b.hits) - calculate(a.kid, a.hits)})
+		users[i].scores = users[i].scores.sort(function(a, b){return b.pulse - a.pulse})
 		for (let k = 0; k < users[i].scores.length && k < topPlayMults.length; k++) {
 			users[i].pulse += users[i].scores[k].pulse * topPlayMults[k];
 		}
