@@ -3,16 +3,17 @@
 	<head>
 		<meta charset="UTF-8">
 		<link rel="icon" href=""/>
-		<title>Pulsus Korean Private Server!!!!111111111111111</title>
+		<title>Pulsus Korean (or is it?) Server</title>
 		<link rel="stylesheet" href="style.css"/>
 		<script src="kids.js"></script>
 		<script src="leaderboards.js"></script>
 		<script src="main.js" defer></script>
 	</head>
 	<body>
-	<span style="position:sticky;font-size:10px;top:0;color:#FFFFFF80;">Last updated Feb 26 2024 - Added mods</span>
+	<span style="position:sticky;font-size:10px;top:0;color:#FFFFFF80;">Last updated Mar 17 2024 - Added map leaderboards</span>
 	<center>
-		<h1>Welcome to the Pulsus Korean <s>Private</s> Public Server!</h1><br><br>
+		<h1>Welcome to the Pulsus Korean <s>Private</s> Public Server!</h1><span style="font-size:8px;">is this really korean?</span><br>
+		You can join the Discord <a href="https://discord.gg/qhDEGuJAHX">here!</a><br>
 		<h3>Awarded Maps</h3><br>
 		<table id="awardedMapsTable">
 			<tr>
@@ -24,6 +25,16 @@
 				<th>Notes</th>
 			</tr>
 		</table><br><br>
+		<h3 id="mapLeaderboardText">Map Leaderboard</h3><br>
+		<table id="mapLeaderboardTable">
+			<tr>
+				<th>Rank</th>
+				<th>User</th>
+				<th>Accuracy</th>
+				<th>Pulse</th>
+				<th>Mods</th>
+			</tr>
+		</table><br><br><br>
 		<h3>Leaderboard</h3><br>
 		<table id="leaderboardTable">
 			<tr>
@@ -33,7 +44,7 @@
 				<th>Top Play</th>
 			</tr>
 		</table><br><br><br>
-		<h2>User Profile</h2>
+		<h2 id="userProfileText">User Profile:</h2>
 		<div class="container" style="text-align:left;">
 			<div class="profilePic" id="profilePic">hi</div>
 			<div class="info" id="profileInfo"><h2>User - #?</h2><br>Pulse: 0p</div>

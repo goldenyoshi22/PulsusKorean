@@ -25,7 +25,7 @@ async function initAll() {
 	sortKids("difficulty");
 	document.getElementById("awardedMapsTable").innerHTML = `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`
 	for (let i = 0; i < sortedKids.length; i++) {
-		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td>${sortedKids[i].name}</td><td>${sortedKids[i].author}</td>
+		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td style="cursor:pointer;" onclick="showMapLeaderboard(${i})"><b>${sortedKids[i].name}</b></td><td>${sortedKids[i].author}</td>
 		<td style="${sortedKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][1]};">${sortedKids[i].difficulty}</td>
 		<td>${sortedKids[i].skill}</td>
 		<td>${isNaN(sortedKids[i].notes) ? "?" : sortedKids[i].notes}</td></tr>`
@@ -61,7 +61,7 @@ for (let i = 0; i < kidScores.length; i++) {
 		if (kidScores[i].scores[k].mods != undefined) {
 			finalMult = 1;
 			finalString = "";
-			console.log(kidScores[i].scores[k]);
+			//console.log(kidScores[i].scores[k]);
 				let modArray = kidScores[i].scores[k].mods;
 			for (let modIndex = 0; modIndex < modArray.length; modIndex++) {
 				if (modArray[modIndex].startsWith("bpm")) {
@@ -114,7 +114,8 @@ for (let i = 0; i < kidScores.length; i++) {
 		if (!userNames.includes(kidScores[i].scores[k].username)) {
 			users.push({username: kidScores[i].scores[k].username, scores: [], pulse: 0});
 		};
-		users[users.findIndex(item => item.username === kidScores[i].scores[k].username)].scores.push(kidScores[i].scores[k])
+		users[users.findIndex(item => item.username === kidScores[i].scores[k].username)].scores.push(kidScores[i].scores[k]);
+		kidScores[i].scores.sort(function(a, b){return b.pulse - a.pulse});
 	};
 };
 	var topPlayMults = [1.00, 0.98, 0.96, 0.94, 0.92, 0.90, 0.86, 0.82, 0.78, 0.74, 0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05]
@@ -127,9 +128,12 @@ for (let i = 0; i < kidScores.length; i++) {
 	users = users.sort(function(a, b){return b.pulse - a.pulse})
 	for (let i = 0; i < users.length; i++) {
 		users[i].rank = i+1;
-		document.getElementById("leaderboardTable").innerHTML += `<tr><td>#${i + 1}</td><td><u style="cursor:pointer;" onclick='showUserProfile(${JSON.stringify(users[i])})'>${users[i].username}</u></td><td>${users[i].pulse.toFixed(3)}p</td>
+		document.getElementById("leaderboardTable").innerHTML += `<tr><td>#${i + 1}</td><td><b style="cursor:pointer;" onclick='showUserProfile(${JSON.stringify(users[i])})'>${users[i].username}</b></td><td>${users[i].pulse.toFixed(3)}p</td>
 		<td>${kids[users[i].scores[0].kid].name} ${users[i].scores[0].modInfo == "" ? "" : "[" + users[i].scores[0].modInfo + "]"} ~ ${users[i].scores[0].pulse.toFixed(3)}p (${(users[i].scores[0].accuracy * 100).toFixed(3)}%)</td></tr>`
 	};
+	document.querySelectorAll("[onclick]").forEach(function(element) {
+		element.classList.add("hoverDark")
+	});
 }
 
 function initAwardedMaps() {
@@ -183,4 +187,28 @@ function showUserProfile(targetUser) {
 	}
 	
 	document.getElementById("profileScores").innerHTML = `${pendHTML}</table>`;
+	document.getElementById("userProfileText").innerHTML = `${targetUser.username}'s Profile`;
+	document.getElementById("userProfileText").scrollIntoView({behavior: "smooth"});
+}
+
+function showMapLeaderboard(mapID) {
+	mapID = sortedKids[mapID].kid;
+	let pendHTML = `<tr><th>Rank</th><th>User</th><th>Accuracy</th><th>Pulse</th><th>Mods</th></tr>`;
+	
+	for (let i = 0; i < kidScores[mapID].scores.length; i++) {
+		let currentScore = kidScores[mapID].scores[i];
+		pendHTML += `
+		<tr>
+		<td>#${i+1}</td>
+		<td>${currentScore.username}</td>
+		<td>${(currentScore.accuracy * 100).toFixed(3)}%</td>
+		<td>${currentScore.pulse.toFixed(3)}p</td>
+		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "" : "(" + currentScore.modMult.toFixed(3) + "x)"}</td>
+		</tr>`
+	}
+		
+	document.getElementById("mapLeaderboardText").innerHTML = `${kidScores[mapID].title} - Leaderboard`;
+	document.getElementById("mapLeaderboardTable").innerHTML = pendHTML;
+	
+	document.getElementById("mapLeaderboardText").scrollIntoView({behavior: "smooth"});
 }

@@ -42,3 +42,7 @@ table {
 .profilePic { grid-area: profilePic; }
 .info { grid-area: info; }
 .scores { grid-area: scores; }
+
+.hoverDark:hover {
+	filter: brightness(80%);
+}
