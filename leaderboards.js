@@ -1,188 +1,3 @@
-var kidScores = [
-    {
-        "kid": 19,
-        "title": "You wouldn't steal a Hard",
-        "score0": "AFS/92,29,5,0,0"
-    },
-    {
-        "kid": 22,
-        "title": "Story of Undertale"
-    },
-    {
-        "kid": 5,
-        "title": "TECHNOPOLIS 2085",
-        "score0": "Sep/544,121,6,1,1"
-    },
-    {
-        "kid": 14,
-        "title": "Cannelés au Chocolat",
-        "score0": "goldenyoshi22/646,184,13,4,6",
-        "score1": "Lilyyy/779,67,6,0,1"
-    },
-    {
-        "kid": 15,
-        "title": "Izayoi Ravers",
-        "score0": "goldenyoshi22/738,118,46,3,0"
-    },
-    {
-        "kid": 16,
-        "title": "10 Things I Hate About You // Jaded",
-        "score0": "goldenyoshi22/488,183,28,2,3",
-        "score1": "methanal/652,52,0,0,0",
-        "score2": "AFS/468,159,61,11,5"
-    },
-    {
-        "kid": 2,
-        "title": "HELIX",
-        "score0": "Sep/497,124,19,2,2"
-    },
-    {
-        "kid": 20,
-        "title": "Start Again"
-    },
-    {
-        "kid": 21,
-        "title": "Happy Lucky->Injection!!"
-    },
-    {
-        "kid": 8,
-        "title": "Failure Girl [Passable]",
-        "score0": "Sep/945,141,8,0,0",
-        "score1": "methanal/990,100,3,1,0"
-    },
-    {
-        "kid": 13,
-        "title": "Corrupting Wonderland",
-        "score0": "Sep/747,202,31,0,2"
-    },
-    {
-        "kid": 11,
-        "title": "Made of Fire",
-        "score0": "Sep/499,104,25,0,4",
-        "score1": "methanal/575,55,2,0,0",
-        "score2": "AFS/352,169,76,14,21",
-        "score3": "goldenyoshi22/554,65,10,0,3"
-    },
-    {
-        "kid": 1,
-        "title": "Three eyes ~ awa...",
-        "score0": "Sep/938,216,30,6,6",
-        "score1": "methanal/953,206,39,6,8",
-        "score2": "goldenyoshi22/824,246,70,21,31"
-    },
-    {
-        "kid": 12,
-        "title": "How do you pronounce Boaz?",
-        "score0": "methanal/594,157,37,6,7"
-    },
-    {
-        "kid": 7,
-        "title": "Piercing Snowflake",
-        "score0": "methanal/429,85,6,0,2"
-    },
-    {
-        "kid": 23,
-        "title": "Crazy Frog",
-        "score0": "goldenyoshi22/1711,394,65,24,28",
-        "score1": "shianara/893,680,598,51,0",
-        "score2": "Lilyyy/918,762,373,49,120"
-    },
-    {
-        "kid": 9,
-        "title": "XNOR XNOR XNOR",
-        "score0": "Sep/2212,746,200,35,65"
-    },
-    {
-        "kid": 10,
-        "title": "true DJ MAG top ranker's song zenpen (katagiri remix)",
-        "score0": "goldenyoshi22/1977,763,295,34,71",
-        "score1": "methanal/2529,561,37,2,11"
-    },
-    {
-        "kid": 4,
-        "title": "Air",
-        "score0": "shianara/793,572,270,27,11"
-    },
-    {
-        "kid": 24,
-        "title": "Crystal Gravity"
-    },
-    {
-        "kid": 6,
-        "title": "FLAMEWALL // STELLAR CORE",
-        "score0": "methanal/2845,1000,145,10,40"
-    },
-    {
-        "kid": 17,
-        "title": "Ringo's Tea Party",
-        "score0": "methanal/1267,351,28,5,12",
-        "score1": "Lilyyy/953,394,188,42,86"
-    },
-    {
-        "kid": 3,
-        "title": "Apollo"
-    },
-    {
-        "kid": 0,
-        "title": "three eyes"
-    },
-    {
-        "kid": 18,
-        "title": "Circus Galop"
-    },
-    {
-        "kid": 25,
-        "title": "Mighty Little Man",
-        "score0": "AFS/78,9,0,0,0"
-    },
-    {
-        "kid": 26,
-        "title": "Bakuure! Match Uri no Haken Shoujo - Extra",
-        "score0": "AFS/601,334,83,13,14"
-    },
-    {
-        "kid": 27,
-        "title": "VULTURE",
-        "score0": "methanal/3178,810,120,11,26",
-        "score1": "AFS/1853,935,813,209,335"
-    },
-    {
-        "kid": 28,
-        "title": "najimi breakers",
-        "score0": "shianara/585,496,550,133,222"
-    },
-    {
-        "kid": 29,
-        "title": "Twinkle Parade"
-    },
-    {
-        "kid": 30,
-        "title": "Crazy Loop [Hyper]"
-    },
-    {
-        "kid": 31,
-        "title": "Cory in the House [Expert]"
-    },
-    {
-        "kid": 32,
-        "title": "EVERYBODY DO THE FLOP [EXPERT]"
-    },
-    {
-        "kid": 33,
-        "title": "ISSUE 480",
-        "score0": "shianara/713,464,92,3,0",
-        "score1": "methanal/1077,173,18,2,2",
-        "score2": "goldenyoshi22/913,274,47,6,32",
-        "score3": "Lilyyy/928,232,91,7,14"
-    },
-    {
-        "kid": 34,
-        "title": "Unplanned Pregnancy // CATASTROPHIC FAILURE",
-        "score0": "goldenyoshi22/231,95,21,4,0",
-        "score1": "methanal/290,56,4,0,1"
-    }
-]
-
 var users = []
 
 function sheetsToScores() {
@@ -190,19 +5,19 @@ function sheetsToScores() {
 	kidScores = [];
 	fetch("https://sheets.googleapis.com/v4/spreadsheets/1pvhP4uQHJgJMWlVNRFp8KcdKpGm0AaoxDbfiyuY5PEU/values/Copy+of+scores?key=AIzaSyBgkDt4b932s18UsDfSMhrbopwqQwn6H1w")
 	.then(response => response.json())
-	.then(data => {
-		for (let i = 1; i < data.values.length; i++) {
-			kidScores.push({
-				"kid": parseInt(data.values[i][0]),
-				"title": data.values[i][1],
-			})
-			for (let k = 2; k < data.values[i].length; k++) {
-			kidScores[kidScores.length - 1][`score${k - 2}`] = data.values[i][k];
-			}
-		} 
-	}).then(kidScores => {
-		resolve(kidScores);
-	})
+        .then(data => {
+            for (let i = 1; i < data.values.length; i++) {
+                kidScores.push({
+                    "kid": parseInt(data.values[i][0]),
+                    "title": data.values[i][1],
+                })
+                for (let k = 2; k < data.values[i].length; k++) {
+                kidScores[kidScores.length - 1][`score${k - 2}`] = data.values[i][k];
+                }
+            } 
+        }).then(kidScores => {
+            resolve(kidScores);
+        })
 	});
 }
 
