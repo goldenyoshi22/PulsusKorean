@@ -30,106 +30,10 @@ async function initAll() {
 		document.getElementById("awardedMapsTable").innerHTML += createMap(sortedMaps[i], i);
 	}
 	for (let i = 0; i < kidScores.length; i++) {
-		kidScores[i].scores = [];
-		for (let k = 0; kidScores[i]["score" + k] != undefined; k++) {
-			kidScores[i].scores.push({username: kidScores[i]["score" + k].split("/")[0], mods: kidScores[i]["score" + k].split("/")[2] == undefined ? undefined : kidScores[i]["score" + k].split("/")[2].split(","), hits: kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)}), kid: kidScores[i].kid,
-			pulse: calculate(i, kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)})),
-			accuracy: calculate(i, kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)}), "accuracy")})
-			
-			//mods
-			/*
-			bpm:
-			pulse*((5 ^ bpm)/5) if <1x
-			pulse*bpm if >=1x
+		handleUserModifiers(kidScores[i], i);
+	};
 
-			fs:
-			if 0.8x or less, 1.03x
-			if 0.5x or less, 1.06x
-
-			hw:
-			pulse / hw if hw > 1
-			pulse / (hw^0.5) if hw <= 1
-
-			at: nuh uh
-			nf: 0.8x
-			nr: 0.8x
-			hd: 1.02x
-			fl: 1.1x
-			rd: Math.random() * 1.2 (jk)
-			*/
-
-			if (kidScores[i].scores[k].mods != undefined) {
-				finalMult = 1;
-				finalExponent = 1;
-				finalString = "";
-				//console.log(kidScores[i].scores[k]);
-					let modArray = kidScores[i].scores[k].mods;
-				for (let modIndex = 0; modIndex < modArray.length; modIndex++) {
-					if (modArray[modIndex].startsWith("bpm")) {
-						let bpmMod = modArray[modIndex].slice(3);
-						if (bpmMod >= 1) finalMult *= bpmMod;
-						//else finalMult *= ((25 ** bpmMod) / 25);
-						else finalExponent = 1 - (1 - bpmMod)/2;
-						finalString += `BPM ${bpmMod}x, `
-					}
-					if (modArray[modIndex].startsWith("fs")) {
-						let fsMod = modArray[modIndex].slice(2);
-						if (fsMod <= 0.5) finalMult *= 1.06;
-						else if (fsMod <= 0.8) finalMult *= 1.03;
-						finalString += `FS ${fsMod}x, `
-					}
-					if (modArray[modIndex].startsWith("hw")) {
-						let hwMod = modArray[modIndex].slice(2);
-						if (hwMod > 1) finalMult /= hwMod;
-						else finalMult /= (hwMod ** 0.5);
-						finalString += `HW ${hwMod}x, `
-					}
-					if (modArray[modIndex] == "nf") {
-						finalMult *= 0.8;
-						finalString += `NF, `
-					}
-					if (modArray[modIndex] == "nr") {
-						finalMult *= 0.8;
-						finalString += `NR, `
-					}
-					if (modArray[modIndex] == "hd") {
-						finalMult *= 1.02;
-						finalString += `HD, `
-					}
-					if (modArray[modIndex] == "fl") {
-						finalMult *= 1.1;
-						finalString += `FL, `
-					}
-				}
-				kidScores[i].scores[k].modMult = finalMult;
-				kidScores[i].scores[k].modExponent = finalExponent;
-				if (finalString == "") kidScores[i].scores[k].modInfo = "None";
-				else kidScores[i].scores[k].modInfo = finalString.slice(0, finalString.length - 2);
-			} else {
-				kidScores[i].scores[k].modMult = 1;
-				kidScores[i].scores[k].modExponent = 1;
-				kidScores[i].scores[k].modInfo = "";
-			}
-			kidScores[i].scores[k].pulse *= kidScores[i].scores[k].modMult;
-			kidScores[i].scores[k].pulse **= kidScores[i].scores[k].modExponent;
-			
-			let userNames = [];
-			for (let m = 0; m < users.length; m++) {
-				userNames.push(users[m].username);
-			};
-			if (!userNames.includes(kidScores[i].scores[k].username)) {
-				users.push({username: kidScores[i].scores[k].username, scores: [], pulse: 0});
-			};
-			users[users.findIndex(item => item.username === kidScores[i].scores[k].username)].scores.push(kidScores[i].scores[k]);
-			kidScores[i].scores.sort(function(a, b){return b.pulse - a.pulse});
-		};
-	}
-	for (let i = 0; i < users.length; i++) {
-		users[i].scores = users[i].scores.sort(function(a, b){return b.pulse - a.pulse})
-		for (let k = 0; k < users[i].scores.length && k < topPlayMults.length; k++) {
-			users[i].pulse += users[i].scores[k].pulse * topPlayMults[k];
-		}
-	}
+	userFindKoreanPulse();
 	users = users.sort(function(a, b){return b.pulse - a.pulse})
 	for (let i = 0; i < users.length; i++) {
 		users[i].rank = i+1;
@@ -242,8 +146,6 @@ function createMap(map, i) {
 	format = format.replace("${8}", map.difficulty);
 	format = format.replace("${9}", map.skill);
 	format = format.replace("${10}", isNaN(map.notes)? "?" : map.notes)
-
-	console.log(format);
 
 	return format;
 }

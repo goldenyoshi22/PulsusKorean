@@ -30,11 +30,9 @@ function calculate(kid, hits, type = "pulse", forceAcc = false) {
 	switch (type) {
 		case "pulse":
 		return ((0.8 * ((10 ** Math.log(diff+1)) * (notes ** 0.1))) ** (acc)) * Math.min(notes/500, 1)
-		break;
 		
 		case "accuracy":
 		return acc;
-		break;
 	}
 	//KP = ((5 * ((1.4 ^ diff) * (min(notes,3737) ^ 0.1))) ^ (acc/100)) * min(notes/500, 1)
 }

@@ -38,19 +38,6 @@ function sheetsToMaps() {
 var sortedMaps = [];
 
 async function sortMaps(method) {
-	sortedMaps = [];
-	switch (method) {
-		case "difficulty":
-        sortedMaps = maps.toSorted(function(a, b) {return a.difficulty - b.difficulty});
-		break;
-		
-		case "notes":
-        sortedMaps = maps.toSorted(function(a, b) {return a.notes - b.notes});
-		break;
-		
-		case "skillset":
-        sortedMaps = maps.toSorted(function(a, b) {return a.difficulty - b.difficulty});
-        sortedMaps.sort(function(a, b) {return a.skill.localeCompare(b.skill)});
-		break;
-	}
+	// i went too hard - jslposu, after code sightread
+	sortedMaps = maps.toSorted(sortFunctions[method]);
 }
