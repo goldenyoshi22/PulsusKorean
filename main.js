@@ -47,11 +47,11 @@ async function initAll() {
 
 function initAwardedMaps() {
 	document.getElementById("awardedMapsTable").innerHTML = `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`
-	for (let i = 0; i < sortedKids.length; i++) {
-		document.getElementById("awardedMapsTable").innerHTML += `<tr><td title="KID: ${sortedKids[i].kid}">${sortedKids[i].id}</td><td style="cursor:pointer;" onclick="showMapLeaderboard(${i})"><b>${sortedKids[i].name}</b></td><td>${sortedKids[i].author}</td>
-		<td style="${sortedKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][1]};">${sortedKids[i].difficulty}</td>
-		<td>${sortedKids[i].skill}</td>
-		<td>${isNaN(sortedKids[i].notes) ? "?" : sortedKids[i].notes}</td></tr>`
+	for (let i = 0; i < sortedMaps.length; i++) {
+		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedMaps[i].id}</td><td>${sortedMaps[i].name}</td><td>${sortedMaps[i].author}</td>
+		<td style="${sortedMaps[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(sortedMaps[i].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(sortedMaps[i].difficulty, 0))][1]};">${sortedMaps[i].difficulty}</td>
+		<td>${sortedMaps[i].skill}</td>
+		<td>${isNaN(sortedMaps[i].notes) ? "?" : sortedMaps[i].notes}</td></tr>`
 	}
 }
 
@@ -134,7 +134,7 @@ function createMap(map, i) {
 	format = format.replace("${3}", map.name);
 	format = format.replace("${4}", map.author);
 
-	const color = difficultyColors[map.difficulty < 0? 0 : Math.floor(map.difficulty)];
+	const color = difficultyColors[Math.floor(Math.max(map.difficulty, 0))];
 	if (map.difficulty >= 17) {
 		format = format.replace("${5}", "font-style:italic;text-decoration:underline line-through;");
 	} else {
