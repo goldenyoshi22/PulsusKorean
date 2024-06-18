@@ -19,8 +19,6 @@ var difficultyColors = [
 ["#000000", "#666666"], //17
 ]
 
-var topPlayMults = [1.00, 0.98, 0.96, 0.94, 0.92, 0.90, 0.86, 0.82, 0.78, 0.74, 0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05]
-
 async function initAll() {
 	await sheetsToMaps();
 	await sheetsToScores();
@@ -75,24 +73,63 @@ function showUserProfile(targetUser) {
 	console.log(targetUser);
 	if (typeof targetUser == "string") targetUser = JSON.parse(targetUser);
 	
-	document.getElementById("profileInfo").innerHTML = `
-	<h3>${targetUser.username} - #${targetUser.rank}</h3>
-	Pulse: ${typeof targetUser.pulse != "number" ? "???" : targetUser.pulse.toFixed(3)}p
-	`
-	
+	let profileInfoHTML = '<h2>${1} - #${2}</h2>'
+						 +'<h4>Pulse: ${3}</h4>'
+
+	profileInfoHTML = profileInfoHTML.replace("${1}", targetUser.username);
+	profileInfoHTML = profileInfoHTML.replace("${2}", targetUser.rank);
+	if (typeof targetUser.pulse != "number") {
+		profileInfoHTML = profileInfoHTML.replace("${3}", "???");
+	} else {
+		profileInfoHTML = profileInfoHTML.replace("${3}", targetUser.pulse.toFixed(3));
+	}
+
+	document.getElementById("profileInfo").innerHTML = profileInfoHTML;
+
 	let pendHTML = `<table><tr><th>Map</th><th>Difficulty</th><th>Accuracy</th><th>Pulse</th><th>Mods</th></tr>`
 	
 	for (let i = 0; i < targetUser.scores.length; i++) {
 		let currentScore = targetUser.scores[i]
-		pendHTML += `
-		<tbody><tr>
-		<td>${maps[currentScore.kid].name}</td>
-		<td style="${maps[currentScore.kid].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(maps[currentScore.kid].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(maps[currentScore.kid].difficulty, 0))][1]};">${maps[currentScore.kid].difficulty}</td>
-		<td title="Pulsus Accuracy: ${((currentScore.hits[0]*100+currentScore.hits[1]*100+currentScore.hits[2]*50+currentScore.hits[3]*20)/(maps[currentScore.kid].notes)).toFixed(3)}%" ${currentScore.hits[2]+currentScore.hits[3]+currentScore.hits[4] == 0 ? "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'" : (currentScore.hits[4] == 0 ? "style='color:yellow;'" : "")}>${(currentScore.accuracy * 100).toFixed(3)}%</td>
-		<td title="Weighted: ${(currentScore.pulse * topPlayMults[i]).toFixed(3)}p">${currentScore.pulse.toFixed(3)}p</td>
-		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + currentScore.modMult.toFixed(3) + "x)<sup>" + (currentScore.modExponent == 1 ? "" : currentScore.modExponent.toFixed(3)) + "</sup>"}</td>
-		</tr></tbody>
-		`
+		const map = maps[currentScore.kid];
+		const color = difficultyColors[Math.floor(Math.max(map.difficulty, 0))];
+		const accuracy = (100 * (currentScore.hits[0] + currentScore.hits[1] + currentScore.hits[2] * 0.5 + currentScore.hits[3] * 0.2) / (maps[currentScore.kid].notes)).toFixed(3);
+
+		let text = '<tbody><tr>'
+				  +'<td>${1}</td>'
+				  +'<td style="${2}background-color:${3};color:${4};">${5}</td>'
+				  +'<td title="Pulsus Accuracy: ${6}%" ${7}>${8}%</td>'
+				  +'<td title="Weighted: ${9}p">${10}p</td>'
+				  +'<td>${11} ${12}</td>'
+				  +'</tr></tbody>'
+
+		text = text.replace("${1}", map.name)
+		if (maps.difficulty >= 17) {
+			text = text.replace("${2}", "font-style:italic;text-decoration:underline line-through;");
+		} else {
+			text = text.replace("${2}", "");
+		}
+		text = text.replace("${3}", color[0]);
+		text = text.replace("${4}", color[1]);
+		text = text.replace("${5}", map.difficulty);
+		text = text.replace("${6}", accuracy);
+		if (currentScore.hits[2] + currentScore.hits[3] + currentScore.hits[4] == 0) {
+			text = text.replace("${7}", "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'");
+		} else if (currentScore.hits[4] == 0) {
+			text = text.replace("${7}", "style='color:yellow;'");
+		} else {
+			text = text.replace("${7}", "");
+		}
+		text = text.replace("${8}", (currentScore.accuracy * 100).toFixed(3));
+		text = text.replace("${9}", (currentScore.pulse * topPlayMults[i]).toFixed(3));
+		text = text.replace("${10}", currentScore.pulse.toFixed(3));
+		text = text.replace("${11}", currentScore.modInfo);
+		if (currentScore.modInfo) {
+			text = text.replace("${12}", "(" + currentScore.modMult.toFixed(3) + "x)");
+		} else {
+			text = text.replace("${12}", "None");
+		}
+
+		pendHTML += text;
 	}
 	
 	document.getElementById("profileScores").innerHTML = `${pendHTML}</table>`;

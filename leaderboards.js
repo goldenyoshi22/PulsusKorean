@@ -1,3 +1,4 @@
+const topPlayMults = [1.00, 0.98, 0.96, 0.94, 0.92, 0.90, 0.86, 0.82, 0.78, 0.74, 0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05]
 var users = []
 
 function sheetsToScores() {
@@ -38,7 +39,6 @@ function calculate(kid, hits, type = "pulse", forceAcc = false) {
 }
 
 async function initLeaderboards() {
-	await sheetsToKids();
 	await sheetsToScores();
 for (let i = 0; i < kidScores.length; i++) {
 	kidScores[i].scores = [];
