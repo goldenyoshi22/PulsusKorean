@@ -134,7 +134,7 @@ function createMap(map, i) {
 	format = format.replace("${3}", map.name);
 	format = format.replace("${4}", map.author);
 
-	const color = difficultyColors[map.difficulty < 0? 17 : Math.floor(map.difficulty)];
+	const color = difficultyColors[map.difficulty < 0? 0 : Math.floor(map.difficulty)];
 	if (map.difficulty >= 17) {
 		format = format.replace("${5}", "font-style:italic;text-decoration:underline line-through;");
 	} else {
