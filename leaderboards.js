@@ -206,15 +206,15 @@ function sheetsToScores() {
 	});
 }
 
-function calculate(kid, hits, type = "pulse") {
+function calculate(kid, hits, type = "pulse", forceAcc = false) {
 	let diff = kids[kid].difficulty;
 	let notes = (typeof kids[kid].notes == "number" && !isNaN(kids[kid].notes)) ? kids[kid].notes : hits[0]+hits[1]+hits[2]+hits[3]+hits[4]
 	if (kids[kid].notes == undefined) console.warn(`This kid, ${kids[kid].name} has an unknown amount of notes, so it will be treated as the amount of hits (${notes})`);
-	let acc = (hits[0] + hits[1]*0.95 + hits[2]*0.5 + hits[3]*0.2) / notes;
+	let acc = forceAcc == false ? (hits[0] + hits[1]*0.95 + hits[2]*0.5 + hits[3]*0.2) / notes : forceAcc/100;
 	//console.log(diff, notes, hits, acc)
 	switch (type) {
 		case "pulse":
-		return ((0.8 * ((11 ** Math.log(diff)) * (notes ** 0.1))) ** (acc)) * Math.min(notes/500, 1)
+		return ((0.8 * ((10 ** Math.log(diff+1)) * (notes ** 0.1))) ** (acc)) * Math.min(notes/500, 1)
 		break;
 		
 		case "accuracy":

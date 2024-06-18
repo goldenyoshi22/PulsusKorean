@@ -25,13 +25,7 @@ async function initAll() {
 	await sheetsToKids();
 	await sheetsToScores();
 	sortKids("difficulty");
-	document.getElementById("awardedMapsTable").innerHTML = `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`
-	for (let i = 0; i < sortedKids.length; i++) {
-		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td style="cursor:pointer;" onclick="showMapLeaderboard(${i})"><b>${sortedKids[i].name}</b></td><td>${sortedKids[i].author}</td>
-		<td style="${sortedKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][1]};">${sortedKids[i].difficulty}</td>
-		<td>${sortedKids[i].skill}</td>
-		<td>${isNaN(sortedKids[i].notes) ? "?" : sortedKids[i].notes}</td></tr>`
-	}
+	initAwardedMaps();
 for (let i = 0; i < kidScores.length; i++) {
 	kidScores[i].scores = [];
 	for (let k = 0; kidScores[i]["score" + k] != undefined; k++) {
@@ -62,6 +56,7 @@ for (let i = 0; i < kidScores.length; i++) {
 		*/
 		if (kidScores[i].scores[k].mods != undefined) {
 			finalMult = 1;
+			finalExponent = 1;
 			finalString = "";
 			//console.log(kidScores[i].scores[k]);
 				let modArray = kidScores[i].scores[k].mods;
@@ -69,7 +64,8 @@ for (let i = 0; i < kidScores.length; i++) {
 				if (modArray[modIndex].startsWith("bpm")) {
 					let bpmMod = modArray[modIndex].slice(3);
 					if (bpmMod >= 1) finalMult *= bpmMod;
-					else finalMult *= ((5 ** bpmMod) / 5);
+					//else finalMult *= ((25 ** bpmMod) / 25);
+					else finalExponent = 1 - (1 - bpmMod)/2;
 					finalString += `BPM ${bpmMod}x, `
 				}
 				if (modArray[modIndex].startsWith("fs")) {
@@ -102,13 +98,16 @@ for (let i = 0; i < kidScores.length; i++) {
 				}
 			}
 			kidScores[i].scores[k].modMult = finalMult;
+			kidScores[i].scores[k].modExponent = finalExponent;
 			if (finalString == "") kidScores[i].scores[k].modInfo = "None";
 			else kidScores[i].scores[k].modInfo = finalString.slice(0, finalString.length - 2);
 		} else {
 			kidScores[i].scores[k].modMult = 1;
+			kidScores[i].scores[k].modExponent = 1;
 			kidScores[i].scores[k].modInfo = "";
 		}
 		kidScores[i].scores[k].pulse *= kidScores[i].scores[k].modMult;
+		kidScores[i].scores[k].pulse **= kidScores[i].scores[k].modExponent;
 		
 		let userNames = [];
 		for (let m = 0; m < users.length; m++) {
@@ -141,7 +140,7 @@ for (let i = 0; i < kidScores.length; i++) {
 function initAwardedMaps() {
 	document.getElementById("awardedMapsTable").innerHTML = `<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`
 	for (let i = 0; i < sortedKids.length; i++) {
-		document.getElementById("awardedMapsTable").innerHTML += `<tr><td>${sortedKids[i].id}</td><td>${sortedKids[i].name}</td><td>${sortedKids[i].author}</td>
+		document.getElementById("awardedMapsTable").innerHTML += `<tr><td title="KID: ${sortedKids[i].kid}">${sortedKids[i].id}</td><td style="cursor:pointer;" onclick="showMapLeaderboard(${i})"><b>${sortedKids[i].name}</b></td><td>${sortedKids[i].author}</td>
 		<td style="${sortedKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(sortedKids[i].difficulty, 0))][1]};">${sortedKids[i].difficulty}</td>
 		<td>${sortedKids[i].skill}</td>
 		<td>${isNaN(sortedKids[i].notes) ? "?" : sortedKids[i].notes}</td></tr>`
@@ -183,7 +182,7 @@ function showUserProfile(targetUser) {
 		<td style="${kids[currentScore.kid].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[Math.floor(Math.max(kids[currentScore.kid].difficulty, 0))][0]};color:${difficultyColors[Math.floor(Math.max(kids[currentScore.kid].difficulty, 0))][1]};">${kids[currentScore.kid].difficulty}</td>
 		<td title="Pulsus Accuracy: ${((currentScore.hits[0]*100+currentScore.hits[1]*100+currentScore.hits[2]*50+currentScore.hits[3]*20)/(kids[currentScore.kid].notes)).toFixed(3)}%" ${currentScore.hits[2]+currentScore.hits[3]+currentScore.hits[4] == 0 ? "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'" : (currentScore.hits[4] == 0 ? "style='color:yellow;'" : "")}>${(currentScore.accuracy * 100).toFixed(3)}%</td>
 		<td title="Weighted: ${(currentScore.pulse * topPlayMults[i]).toFixed(3)}p">${currentScore.pulse.toFixed(3)}p</td>
-		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + currentScore.modMult.toFixed(3) + "x)"}</td>
+		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + currentScore.modMult.toFixed(3) + "x)<sup>" + (currentScore.modExponent == 1 ? "" : currentScore.modExponent.toFixed(3)) + "</sup>"}</td>
 		</tr></tbody>
 		`
 	}
@@ -205,7 +204,7 @@ function showMapLeaderboard(mapID) {
 		<td>${currentScore.username}</td>
 		<td title="Pulsus Accuracy: ${((currentScore.hits[0]*100+currentScore.hits[1]*100+currentScore.hits[2]*50+currentScore.hits[3]*20)/(kids[currentScore.kid].notes)).toFixed(3)}%" ${currentScore.hits[2]+currentScore.hits[3]+currentScore.hits[4] == 0 ? "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'" : (currentScore.hits[4] == 0 ? "style='color:yellow;'" : "")}>${(currentScore.accuracy * 100).toFixed(3)}%</td>
 		<td>${currentScore.pulse.toFixed(3)}p</td>
-		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + currentScore.modMult.toFixed(3) + "x)"}</td>
+		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + currentScore.modMult.toFixed(3) + "x)<sup>" + (currentScore.modExponent == 1 ? "" : currentScore.modExponent.toFixed(3)) + "</sup>"}</td>
 		</tr></tbody>`
 	}
 		
