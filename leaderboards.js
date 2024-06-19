@@ -23,9 +23,9 @@ function sheetsToScores() {
 }
 
 function calculate(kid, hits, type = "pulse", forceAcc = false) {
-	let diff = kids[kid].difficulty;
-	let notes = (typeof kids[kid].notes == "number" && !isNaN(kids[kid].notes)) ? kids[kid].notes : hits[0]+hits[1]+hits[2]+hits[3]+hits[4]
-	if (kids[kid].notes == undefined) console.warn(`This kid, ${kids[kid].name} has an unknown amount of notes, so it will be treated as the amount of hits (${notes})`);
+	let diff = maps[kid].difficulty;
+	let notes = (typeof maps[kid].notes == "number" && !isNaN(maps[kid].notes)) ? maps[kid].notes : hits[0]+hits[1]+hits[2]+hits[3]+hits[4]
+	if (maps[kid].notes == undefined) console.warn(`This kid, ${maps[kid].name} has an unknown amount of notes, so it will be treated as the amount of hits (${notes})`);
 	let acc = forceAcc == false ? (hits[0] + hits[1]*0.95 + hits[2]*0.5 + hits[3]*0.2) / notes : forceAcc/100;
 	//console.log(diff, notes, hits, acc)
 	switch (type) {

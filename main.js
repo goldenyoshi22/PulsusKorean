@@ -99,7 +99,7 @@ function showUserProfile(targetUser) {
 				  +'<td style="${2}background-color:${3};color:${4};">${5}</td>'
 				  +'<td title="Pulsus Accuracy: ${6}%" ${7}>${8}%</td>'
 				  +'<td title="Weighted: ${9}p">${10}p</td>'
-				  +'<td>${11} ${12}</td>'
+				  +'<td>${11} ${12}${13}</td>'
 				  +'</tr></tbody>'
 
 		text = text.replace("${1}", map.name)
@@ -113,6 +113,8 @@ function showUserProfile(targetUser) {
 		text = text.replace("${5}", map.difficulty);
 		text = text.replace("${6}", accuracy);
 		if (currentScore.hits[2] + currentScore.hits[3] + currentScore.hits[4] == 0) {
+			text = text.replace("${7}", "style='color: #DE66FF'");
+		} else if (currentScore.hits[3] + currentScore.hits[4] == 0) {
 			text = text.replace("${7}", "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'");
 		} else if (currentScore.hits[4] == 0) {
 			text = text.replace("${7}", "style='color:yellow;'");
@@ -127,6 +129,11 @@ function showUserProfile(targetUser) {
 			text = text.replace("${12}", "(" + currentScore.modMult.toFixed(3) + "x)");
 		} else {
 			text = text.replace("${12}", "None");
+		}
+		if (currentScore.modExponent != 1) {
+			text = text.replace("${13}", "<sup>" + currentScore.modExponent.toFixed(3) + "</sup>");
+		} else {
+			text = text.replace("${13}", "");
 		}
 
 		pendHTML += text;

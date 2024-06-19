@@ -22,7 +22,6 @@ function userFindKoreanPulse() {
 function handleUserModifiers(kidscore, i) {
     kidscore.scores = [];
     for (let k = 0; kidscore["score" + k] != undefined; k++) {
-        console.log(kidscore);
         kidscore.scores.push({
             username: kidscore["score" + k].split("/")[0],
             mods: kidscore["score" + k].split("/")[2] == undefined ? undefined : kidscore["score" + k].split("/")[2].split(","),
@@ -56,16 +55,16 @@ function handleUserModifiers(kidscore, i) {
 
         if (kidscore.scores[k].mods != undefined) {
             finalMult = 1;
+            finalExponent = 1;
             finalString = "";
 
             let modArray = kidscore.scores[k].mods;
+            console.log(modArray);
             for (let modIndex = 0; modIndex < modArray.length; modIndex++) {
-                if (modIndex) finalString += ", ";
-                
                 if (modArray[modIndex].startsWith("bpm")) {
                     let bpmMod = modArray[modIndex].slice(3);
-                    if (bpmMod >= 1) finalMult *= bpmMod; else finalMult *= ((5 ** bpmMod) / 5);
-                    finalString += `BPM ${bpmMod}x`;
+                    if (bpmMod >= 1) finalMult *= bpmMod; else finalExponent = 1 - (1 - bpmMod)/2;
+                    finalString += `BPM ${bpmMod}x, `;
                     continue;
                 }
                 if (modArray[modIndex].startsWith("fs")) {
@@ -73,14 +72,14 @@ function handleUserModifiers(kidscore, i) {
                     //if (fsMod <= 0.5) finalMult *= 1.06;
                     //else if (fsMod <= 0.8) finalMult *= 1.03;
                     if (fsMod < 1.0) finalMult *= 1 + (Math.pow(1.0 - (fsMod - 1.0) * 2, 2) / 4) * 0.06;
-                    finalString += `FS ${fsMod}x`;
+                    finalString += `FS ${fsMod}x, `;
                     continue;
                 }
                 if (modArray[modIndex].startsWith("hw")) {
                     let hwMod = modArray[modIndex].slice(2);
                     if (hwMod > 1) finalMult /= hwMod;
                     else finalMult /= (hwMod ** 0.5);
-                    finalString += `HW ${hwMod}x`;
+                    finalString += `HW ${hwMod}x, `;
                     continue;
                 }
 
@@ -97,16 +96,19 @@ function handleUserModifiers(kidscore, i) {
                     finalMult *= 1.1;
                 }
                 
-                finalString += modArray[modIndex].toUpperCase();
+                finalString += modArray[modIndex].toUpperCase() + ", ";
             }
             kidscore.scores[k].modMult = finalMult;
+            kidscore.scores[k].modExponent = finalExponent;
             if (finalString == "") kidscore.scores[k].modInfo = "None";
             else kidscore.scores[k].modInfo = finalString.slice(0, finalString.length - 2);
         } else {
             kidscore.scores[k].modMult = 1;
+            kidscore.scores[k].modExponent = 1;
             kidscore.scores[k].modInfo = "";
         }
         kidscore.scores[k].pulse *= kidscore.scores[k].modMult;
+        kidscore.scores[k].pulse **= kidscore.scores[k].modExponent;
         
         let userNames = [];
         for (let m = 0; m < users.length; m++) {
