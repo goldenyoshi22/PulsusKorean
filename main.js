@@ -19,8 +19,12 @@ var difficultyColors = [
 ["#000000", "#ff0000"], //16
 ["#000000", "#666666"], //17
 ]
-//best play is 100% pulse, 2nd best play is 98% pulse, etc.
+//pulse weighing, top play is worth 100%, 2nd top play is worth very slightly less, etc.
 var topPlayMults = [1.00, 0.98, 0.96, 0.94, 0.92, 0.90, 0.86, 0.82, 0.78, 0.74, 0.70, 0.65, 0.60, 0.55, 0.50, 0.45, 0.40, 0.35, 0.30, 0.25, 0.20, 0.15, 0.10, 0.05]
+/*var topPlayMults = [];
+for (let i = 0; i < 50; i++) {
+	topPlayMults.push((Math.pow((i/24.5) - 2, 2) / 4))
+}*/
 
 async function initAll() {
 	await sheetsToKids();
@@ -43,7 +47,7 @@ async function initAll() {
 			pulse^bpm if <1x
 			pulse*bpm if >=1x
 
-			fs:
+			fs (old, removed):
 			if 0.8x or less, 1.03x
 			if 0.5x or less, 1.06x
 
@@ -71,13 +75,13 @@ async function initAll() {
 						//else finalMult *= ((5 ** bpmMod) / 5);
 						else finalExponent = 1 - (1 - bpmMod)/2;
 						finalString += `BPM ${bpmMod}x, `
-					}
+					}/*
 					if (modArray[modIndex].startsWith("fs")) {
 						let fsMod = modArray[modIndex].slice(2);
 						if (fsMod <= 0.5) finalMult *= 1.06;
 						else if (fsMod <= 0.8) finalMult *= 1.03;
 						finalString += `FS ${fsMod}x, `
-					}
+					}*/
 					if (modArray[modIndex].startsWith("hw")) {
 						let hwMod = modArray[modIndex].slice(2);
 						if (hwMod > 1) finalMult /= hwMod;
@@ -103,7 +107,7 @@ async function initAll() {
 				}
 				kidScores[i].scores[k].modMult = finalMult;
 				kidScores[i].scores[k].modExponent = finalExponent;
-				if (finalString == "") kidScores[i].scores[k].modInfo = "None";
+				if (finalString == "") kidScores[i].scores[k].modInfo = "No Mods";
 				else kidScores[i].scores[k].modInfo = finalString.slice(0, finalString.length - 2);
 			} else {
 				kidScores[i].scores[k].modMult = 1;
@@ -122,6 +126,7 @@ async function initAll() {
 			};
 			users[users.findIndex(item => item.username === kidScores[i].scores[k].username)].scores.push(kidScores[i].scores[k]);
 			kidScores[i].scores.sort(function(a, b){return b.pulse - a.pulse});
+			//kidScores[i].scores.splice(-1, 9e9);
 		};
 	};
 	for (let i = 0; i < users.length; i++) {
@@ -178,7 +183,7 @@ function showUserProfile(targetUser) {
 	
 	let pendHTML = `<table><tr><th>Map</th><th>Difficulty</th><th>Accuracy</th><th>Pulse</th><th>Mods</th></tr>`;
 	
-	for (let i = 0; i < targetUser.scores.length; i++) {
+	for (let i = 0; i < targetUser.scores.length && i < topPlayMults.length; i++) {
 		let currentScore = targetUser.scores[i]
 		pendHTML += `
 		<tbody><tr>
