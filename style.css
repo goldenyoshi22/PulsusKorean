@@ -46,3 +46,15 @@ table {
 .hoverDark:hover {
 	filter: brightness(80%);
 }
+
+input {
+	font-family: Quicksand, sans-serif;
+	color: hsl(199, 100%, 90%);
+	background-color: hsl(199, 100%, 5%);
+	outline: none;
+	border: none;
+	/*width: 500px;*/
+	width: auto;
+	font-size: 17px;
+	text-align: center;
+}

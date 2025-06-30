@@ -10,11 +10,28 @@
 		<script src="main.js" defer></script>
 	</head>
 	<body>
-	<span style="position:sticky;font-size:10px;top:0;color:#FFFFFF80;">Last updated Aug 23 2024 - Bye bye foresight</span>
+	<span style="position:sticky;font-size:10px;top:0;color:#FFFFFF80;">Last updated Jun 30 2025 - Search filters :D</span>
 	<center>
 		<h1>Welcome to the Pulsus Korean <s>Private</s> Public Server!</h1><span style="font-size:8px;">is this really korean?</span><br>
 		You can join the Discord <a href="https://discord.gg/qhDEGuJAHX">here!</a><br>
 		<h3>Awarded Maps</h3><br>
+		<table id="filterTable">
+			<tr>
+				<th><input id="filterIDInput" type="text" placeholder="🔍 by ID..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input></th>
+				<th><input id="filterTitleInput" type="text" placeholder="🔍 by title..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input></th>
+				<th><input id="filterAuthorInput" type="text" placeholder="🔍 by author..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input></th>
+				<th>
+					<input style="display:inline-block; width:5em;" id="filterDifficultyMinInput" type="number" min="-1" max="18" placeholder="Min. Diff..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input>
+					-
+					<input style="display:inline-block; width:5em;" id="filterDifficultyMaxInput" type="number" min="-1" max="18" placeholder="Max. Diff..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input>
+				</th>
+				<th><input id="filterSkillsetInput" type="text" placeholder="🔍 by skillset..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input></th><th>
+					<input style="display:inline-block; width:5em;" id="filterNotesMinInput" type="number" placeholder="Min. Notes..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input>
+					-
+					<input style="display:inline-block; width:5em;" id="filterNotesMaxInput" type="number" placeholder="Max. Notes..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input>
+				</th>
+			</tr>
+		</table>
 		<table id="awardedMapsTable">
 			<tr>
 				<th>ID</th>

@@ -9,13 +9,14 @@ function sheetsToKids() {
 	.then(data => {
 		for (let i = 1; i < data.values.length; i++) {
 			kids.push({
-				"kid": parseInt(data.values[i][0]),
-				"name": data.values[i][1],
-				"difficulty": parseFloat(data.values[i][2]),
-				"skill": data.values[i][3],
-				"id": parseInt(data.values[i][4]),
-				"author": data.values[i][5],
-				"notes": parseInt(data.values[i][6]),
+				"kid": parseInt(data.values[i][0] ?? -1),
+				"name": data.values[i][1] ?? "",
+				"difficulty": parseFloat(data.values[i][2] ?? -1),
+				"skill": data.values[i][3] ?? "",
+				"id": parseInt(data.values[i][4] ?? -1),
+				"author": data.values[i][5] ?? "",
+				"notes": parseInt(data.values[i][6] ?? -1),
+				"skill2": data.values[i][7] ?? ""
 			})
 		} 
 	}).then(kids => {
@@ -42,4 +43,54 @@ async function sortKids(method) {
 		sortedKids.sort(function(a, b) {return a.skill.localeCompare(b.skill)});
 		break;
 	}
+}
+
+var filteredKids = [];
+async function filterMaps(filtering = []) {
+	//[0] is method, [1] is filtering. (example, ["title", "three"] searches for maps with "three"),
+	//["difficulty", [1.5, 6]] searches for maps from difficulties 1.5 to 6
+	filteredKids = [];
+	filteredKids = sortedKids;
+	if (filtering.length == 0 || typeof filtering != "object") {
+		console.log("invalid filter");
+		return;
+	}
+	for (let i = 0; i < filtering.length; i++) {
+		switch (filtering[i][0]) {
+			case "id":
+				filteredKids = filteredKids.filter((kid) => kid.id.toString().includes(filtering[i][1]));
+			break;
+			
+			case "title":
+				filteredKids = filteredKids.filter((kid) => kid.name.toLowerCase().includes(filtering[i][1].toLowerCase()));
+			break;
+			
+			case "author":
+				filteredKids = filteredKids.filter((kid) => kid.author.toLowerCase().includes(filtering[i][1].toLowerCase()));
+			break;
+			
+			case "difficulty":
+				filteredKids = filteredKids.filter((kid) => kid.difficulty >= parseFloat(filtering[i][1][0]) && kid.difficulty <= parseFloat(filtering[i][1][1]));
+			break;
+			
+			case "skillset":
+				filteredKids = filteredKids.filter((kid) => kid.skill.toLowerCase().includes(filtering[i][1].toLowerCase()) || kid.skill2.toLowerCase().includes(filtering[i][1].toLowerCase()));
+			break;
+			
+			case "notes":
+				filteredKids = filteredKids.filter((kid) => kid.notes >= parseFloat(filtering[i][1][0]) && kid.notes <= parseFloat(filtering[i][1][1]));
+			break;
+		}
+	}
+}
+
+async function bigBoyFilter() {
+	filterMaps([
+	["id", document.getElementById("filterIDInput").value],
+	["title", document.getElementById("filterTitleInput").value],
+	["author", document.getElementById("filterAuthorInput").value],
+	["difficulty", [document.getElementById("filterDifficultyMinInput").value == "" ? -1 : document.getElementById("filterDifficultyMinInput").value, document.getElementById("filterDifficultyMaxInput").value == "" ? 18 : document.getElementById("filterDifficultyMaxInput").value]],
+	["skillset", document.getElementById("filterSkillsetInput").value],
+	["notes", [document.getElementById("filterNotesMinInput").value == "" ? 0 : document.getElementById("filterNotesMinInput").value, document.getElementById("filterNotesMaxInput").value == "" ? Infinity : document.getElementById("filterNotesMaxInput").value]],
+	]);
 }
