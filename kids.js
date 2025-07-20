@@ -25,6 +25,21 @@ function sheetsToKids() {
 	});
 };
 
+var kidOfTheDay = [0, 0];
+function sheetsToDaily() {
+	kidOfTheDay = [];
+	return new Promise((resolve, reject) => {
+	fetch("https://sheets.googleapis.com/v4/spreadsheets/1pvhP4uQHJgJMWlVNRFp8KcdKpGm0AaoxDbfiyuY5PEU/values/Sheet9!A2:B2?key=AIzaSyBgkDt4b932s18UsDfSMhrbopwqQwn6H1w")
+	.then(response => response.json())
+	.then(data => {
+		kidOfTheDay.push(parseInt(data.values[0][0]));
+		kidOfTheDay.push(parseInt(data.values[0][1]));
+	}).then(kidOfTheDay => {
+		resolve(kidOfTheDay);
+	});
+	});
+};
+
 //just sorting the maps by a sorting method chosen, this feature will be added to the html one day...
 var sortedKids = [];
 async function sortKids(method) {
@@ -95,10 +110,9 @@ async function bigBoyFilter() {
 	]);
 }
 
-
+//MOST OF THIS RANDOM CODE was unneeded..... well, i used it in apps script for google sheets, so it was pretty useful actually :D
 var randomEasyKidWeights = [];
 var randomDifficultKidWeights = [];
-var kidOfTheDay = [0, 0];
 //Sorry for ai code, i dont know how to make pseudorandom. And then i was too lazy to figure out weighted index
 function randomForDate(dateInput, hash = 2166136261) {
   const dateStr = new Date(dateInput).toISOString().slice(0, 10);

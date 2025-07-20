@@ -38,8 +38,10 @@ for (let i = 0; i < 50; i++) {
 async function initAll() {
 	await sheetsToKids();
 	await sheetsToScores();
+	await sheetsToDaily();
 	sortKids("difficulty");
 	initAwardedMaps();
+	initDailyMap();
 	//init map leaderboards/scores
 	for (let i = 0; i < kidScores.length; i++) {
 		kidScores[i].scores = [];
@@ -137,14 +139,13 @@ async function initAll() {
 			kidScores[i].scores.sort(function(a, b){return b.pulse - a.pulse});
 			//kidScores[i].scores.splice(-1, 9e9);
 		};
-		if (kids[i].difficulty < 9) {
+		/*if (kids[i].difficulty < 9) {
 			randomEasyKidWeights.push([i, 1.5 ** (-1 * kidScores[i].scores.length)]);
 		} else {
 			randomDifficultKidWeights.push([i, 1.5 ** (-1 * kidScores[i].scores.length)]);
-		}
+		}*/
 	};
-	kidOfTheDay = [randomEasyKidWeights[getWeightedIndex(randomEasyKidWeights, randomForDate(new Date()))][0], randomDifficultKidWeights[getWeightedIndex(randomDifficultKidWeights, randomForDate(new Date(), 1235845769))][0]];
-	initDailyMap();
+	//kidOfTheDay = [randomEasyKidWeights[getWeightedIndex(randomEasyKidWeights, randomForDate(new Date()))][0], randomDifficultKidWeights[getWeightedIndex(randomDifficultKidWeights, randomForDate(new Date(), 1235845769))][0]];
 	for (let i = 0; i < users.length; i++) {
 		users[i].scores = users[i].scores.sort(function(a, b){return b.pulse - a.pulse});
 		for (let k = 0; k < users[i].scores.length && k < topPlayMults.length; k++) {
