@@ -94,3 +94,42 @@ async function bigBoyFilter() {
 	["notes", [document.getElementById("filterNotesMinInput").value == "" ? 0 : document.getElementById("filterNotesMinInput").value, document.getElementById("filterNotesMaxInput").value == "" ? Infinity : document.getElementById("filterNotesMaxInput").value]],
 	]);
 }
+
+
+var randomEasyKidWeights = [];
+var randomDifficultKidWeights = [];
+var kidOfTheDay = [0, 0];
+//Sorry for ai code, i dont know how to make pseudorandom. And then i was too lazy to figure out weighted index
+function randomForDate(dateInput, hash = 2166136261) {
+  const dateStr = new Date(dateInput).toISOString().slice(0, 10);
+
+  // FNV-1a hash
+  // let hash = 2166136261;
+  for (let i = 0; i < dateStr.length; i++) {
+    hash ^= dateStr.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  // LCG
+  let seed = hash >>> 0;
+  seed = (seed * 1664525 + 1013904223) >>> 0;
+
+  return seed / 4294967296;
+}
+
+//Not the same, only works with specific array thingy.   [0] = id, [1] = chance
+function getWeightedIndex(weights, t) {
+  const total = weights.reduce((a, b) => a + b[1], 0);
+  const target = t * total;
+  
+  let cumulative = 0;
+  for (let i = 0; i < weights.length; i++) {
+    cumulative += weights[i][1];
+    if (target < cumulative) {
+      return i;
+    }
+  }
+
+  // Edge case: if t == 1 exactly
+  return weights.length - 1;
+}

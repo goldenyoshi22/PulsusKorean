@@ -10,11 +10,22 @@
 		<script src="main.js" defer></script>
 	</head>
 	<body>
-	<span style="position:sticky;font-size:10px;top:0;color:#FFFFFF80;">Last updated Jun 30 2025 - Search filters :D</span>
+	<span style="position:sticky;font-size:10px;top:0;color:#FFFFFF80;">Last updated Jul 20 2025 - Maps of the day :D</span>
 	<center>
 		<h1>Welcome to the Pulsus Korean <s>Private</s> Public Server!</h1><span style="font-size:8px;">is this really korean?</span><br>
 		You can join the Discord <a href="https://discord.gg/qhDEGuJAHX">here!</a><br>
-		<h3>Awarded Maps</h3><br>
+		<h2>Maps of the Day</h2>
+		<table id="mapOfTheDay">
+			<tr>
+				<th>ID</th>
+				<th>Title</th>
+				<th>Author</th>
+				<th>Difficulty</th>
+				<th>Skillset</th>
+				<th>Notes</th>
+			</tr>
+		</table><br>
+		<h3>Awarded Maps</h3>
 		<table id="filterTable">
 			<tr>
 				<th><input id="filterIDInput" type="text" placeholder="🔍 by ID..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input></th>

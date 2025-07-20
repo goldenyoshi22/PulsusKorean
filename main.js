@@ -137,7 +137,14 @@ async function initAll() {
 			kidScores[i].scores.sort(function(a, b){return b.pulse - a.pulse});
 			//kidScores[i].scores.splice(-1, 9e9);
 		};
+		if (kids[i].difficulty < 9) {
+			randomEasyKidWeights.push([i, 1.5 ** (-1 * kidScores[i].scores.length)]);
+		} else {
+			randomDifficultKidWeights.push([i, 1.5 ** (-1 * kidScores[i].scores.length)]);
+		}
 	};
+	kidOfTheDay = [randomEasyKidWeights[getWeightedIndex(randomEasyKidWeights, randomForDate(new Date()))][0], randomDifficultKidWeights[getWeightedIndex(randomDifficultKidWeights, randomForDate(new Date(), 1235845769))][0]];
+	initDailyMap();
 	for (let i = 0; i < users.length; i++) {
 		users[i].scores = users[i].scores.sort(function(a, b){return b.pulse - a.pulse});
 		for (let k = 0; k < users[i].scores.length && k < topPlayMults.length; k++) {
@@ -156,16 +163,29 @@ async function initAll() {
 }
 
 function initAwardedMaps(filtering = false) {
-	usingKids = filtering ? filteredKids : sortedKids;
+	let usingKids = filtering ? filteredKids : sortedKids;
 	document.getElementById("awardedMapsTable").innerHTML = `
 	<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`;
 	for (let i = 0; i < usingKids.length; i++) {
 		document.getElementById("awardedMapsTable").innerHTML += `<tr><td title="KID: ${usingKids[i].kid}">${usingKids[i].id}</td><td style="cursor:pointer;" onclick="showMapLeaderboard(${i}, ${filtering})"><b>${usingKids[i].name}</b></td><td>${usingKids[i].author}</td>
 		<td style="${usingKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][1]};">${usingKids[i].difficulty >= 0 ? usingKids[i].difficulty : "?"}</td>
-		<td>${usingKids[i].skill}</td>
+		<td title="Others: ${usingKids[i].skill2.replaceAll(" ", ", ")}">${usingKids[i].skill}</td>
 		<td>${isNaN(usingKids[i].notes) ? "?" : usingKids[i].notes}</td></tr>`;
 	};
 };
+
+function initDailyMap() {
+	let usingKids = [kids[kidOfTheDay[0]], kids[kidOfTheDay[1]]];
+	document.getElementById("mapOfTheDay").innerHTML = `
+	<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`;
+	for (let i = 0; i < usingKids.length; i++) {
+		document.getElementById("mapOfTheDay").innerHTML += `<tr><td title="KID: ${usingKids[i].kid}">${usingKids[i].id}</td><td style="cursor:pointer;" onclick="showMapLeaderboard(${usingKids[i].kid}, false, true)"><b>${usingKids[i].name}</b></td><td>${usingKids[i].author}</td>
+			<td style="${usingKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][1]};">${usingKids[i].difficulty >= 0 ? usingKids[i].difficulty : "?"}</td>
+			<td title="Others: ${usingKids[i].skill2.replaceAll(" ", ", ")}">${usingKids[i].skill}</td>
+			<td>${isNaN(usingKids[i].notes) ? "?" : usingKids[i].notes}</td></tr>
+		`;
+	}
+}
 
 function initUserDisplay() {
 	for (let i = 0; i < users.length; i++) {
@@ -212,8 +232,8 @@ function showUserProfile(targetUser) {
 	document.getElementById("userProfileText").scrollIntoView({behavior: "smooth"});
 };
 
-function showMapLeaderboard(mapID, countingFilters = false) {
-	mapID = countingFilters ? filteredKids[mapID].kid : sortedKids[mapID].kid;
+function showMapLeaderboard(mapID, countingFilters = false, forceID = false) {
+	mapID = forceID ? mapID : (countingFilters ? filteredKids[mapID].kid : sortedKids[mapID].kid);
 	let pendHTML = `<tr><th>Rank</th><th>User</th><th>Accuracy</th><th>Pulse</th><th>Mods</th></tr>`;
 	
 	for (let i = 0; i < kidScores[mapID].scores.length; i++) {
