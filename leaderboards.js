@@ -36,7 +36,7 @@ function calculate(kid, hits, type = "pulse", forceAcc = false) {
 	//console.log(diff, notes, hits, acc)
 	switch (type) {
 		case "pulse":
-		return ((0.8 * ((10 ** Math.log(diff+1)) * (notes ** 0.1))) ** (acc)) * Math.min(notes/500, 1)
+		return ((0.8 * ((10 ** Math.log(diff+1)) * (notes ** 0.1))) ** (acc)) * (Math.min(notes/500, 1) ** 1);
 		break;
 		
 		case "accuracy":

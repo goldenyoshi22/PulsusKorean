@@ -4,14 +4,15 @@
 		<meta charset="UTF-8">
 		<link rel="icon" href=""/>
 		<title>Pulsus Korean (or is it?) Server</title>
-		<link rel="stylesheet" href="style.css"/>
-		<script src="kids.js?v=07202025-2"></script>
-		<script src="leaderboards.js?v=07202025-2"></script>
-		<script src="main.js?v=07202025-2" defer></script>
+		<link rel="stylesheet" href="style.css?v=07-20-2025-3"/>
+		<script src="kids.js?v=07-20-2025-3"></script>
+		<script src="leaderboards.js?v=07-20-2025-3"></script>
+		<script src="main.js?v=07-20-2025-3" defer></script>
 	</head>
 	<body>
-	<span style="position:sticky;font-size:10px;top:0;color:#FFFFFF80;">Last updated Jul 20 2025 - Maps of the day bugfix i think. Let me know if disasters happen</span>
+	<span style="position:sticky;font-size:10px;top:0;color:#FFFFFF80;">Last updated Jul 20 2025 #3 - Tooltips and note count &lt;500 isn't screwed</span>
 	<center>
+		<div id="tooltip" class="tooltip"></div>
 		<h1>Welcome to the Pulsus Korean <s>Private</s> Public Server!</h1><span style="font-size:8px;">is this really korean?</span><br>
 		You can join the Discord <a href="https://discord.gg/qhDEGuJAHX">here!</a><br>
 		<h2>Maps of the Day</h2>
@@ -89,5 +90,26 @@
 			</div>
 		</div>
 	</center>
+	<script>
+		const tooltip = document.getElementById('tooltip');
+
+		document.addEventListener('mousemove', (e) => {
+		  tooltip.style.left = `${e.clientX + 0}px`;
+		  tooltip.style.top = `${e.clientY - 30}px`;
+		})
+		
+		document.addEventListener('mouseover', (e) => {
+			const el = e.target.closest('.has-tooltip');
+			if (!el) return;
+			tooltip.innerHTML = el.getAttribute('data-tooltip');
+			tooltip.style.opacity = 1;
+		});
+
+		document.addEventListener('mouseout', (e) => {
+			if (e.target.closest('.has-tooltip')) {
+				tooltip.style.opacity = 0;
+			}
+		});
+	</script>
 	</body>
 </html>

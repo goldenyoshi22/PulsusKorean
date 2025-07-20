@@ -58,3 +58,21 @@ input {
 	font-size: 17px;
 	text-align: center;
 }
+
+.tooltip {
+	position: fixed;
+	background-color: black;
+	color: white;
+	padding: 5px 8px;
+	border-radius: 4px;
+	font-size: 14px;
+	pointer-events: none;
+	white-space: nowrap;
+	z-index: 1000;
+	opacity: 0;
+	transition: opacity 0.1s;
+}
+
+.has-tooltip {
+	/*cursor: default;*/
+}
