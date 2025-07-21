@@ -176,7 +176,7 @@ function initAwardedMaps(filtering = false) {
 };
 
 function initDailyMap() {
-	let usingKids = [kids[kidOfTheDay[0]], kids[kidOfTheDay[1]]];
+	let usingKids = [kids[kidOfTheDay[0]], kids[kidOfTheDay[1]], kids[kidOfTheDay[2]]];
 	document.getElementById("mapOfTheDay").innerHTML = `
 	<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`;
 	for (let i = 0; i < usingKids.length; i++) {

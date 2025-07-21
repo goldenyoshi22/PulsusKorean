@@ -25,15 +25,16 @@ function sheetsToKids() {
 	});
 };
 
-var kidOfTheDay = [0, 0];
+var kidOfTheDay = [0, 0, 0];
 function sheetsToDaily() {
 	kidOfTheDay = [];
 	return new Promise((resolve, reject) => {
-	fetch("https://sheets.googleapis.com/v4/spreadsheets/1pvhP4uQHJgJMWlVNRFp8KcdKpGm0AaoxDbfiyuY5PEU/values/Sheet9!A2:B2?key=AIzaSyBgkDt4b932s18UsDfSMhrbopwqQwn6H1w")
+	fetch("https://sheets.googleapis.com/v4/spreadsheets/1pvhP4uQHJgJMWlVNRFp8KcdKpGm0AaoxDbfiyuY5PEU/values/Sheet9!A2:C2?key=AIzaSyBgkDt4b932s18UsDfSMhrbopwqQwn6H1w")
 	.then(response => response.json())
 	.then(data => {
 		kidOfTheDay.push(parseInt(data.values[0][0]));
 		kidOfTheDay.push(parseInt(data.values[0][1]));
+		kidOfTheDay.push(parseInt(data.values[0][2]));
 	}).then(kidOfTheDay => {
 		resolve(kidOfTheDay);
 	});
