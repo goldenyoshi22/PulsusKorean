@@ -69,7 +69,7 @@ async function initAll() {
 			at: nuh uh
 			nf: 0.8x
 			nr: 0.8x
-			hd: 1.01x
+			hd: 1.01x (old, removed)
 			fl: 1.1x
 			rd: Math.random() * 1.2 (jk)
 			*/
@@ -108,7 +108,7 @@ async function initAll() {
 						finalString += `NR, `;
 					}
 					if (modArray[modIndex] == "hd") {
-						finalMult *= 1.01;
+						finalMult *= 1.00; //old: 1.01
 						finalString += `HD, `;
 					}
 					if (modArray[modIndex] == "fl") {
