@@ -48,9 +48,26 @@ async function initAll() {
 		for (let k = 0; kidScores[i]["score" + k] != undefined; k++) {
 			//pushing a score based on the columns from the google sheet, hence the ["score" + k] because the columns are named like that
 			//this next line is barely readable but shh
-			kidScores[i].scores.push({username: kidScores[i]["score" + k].split("/")[0], mods: kidScores[i]["score" + k].split("/")[2] == undefined ? undefined : kidScores[i]["score" + k].split("/")[2].split(","), hits: kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)}), kid: kidScores[i].kid,
+			kidScores[i].scores.push({
+			username: kidScores[i]["score" + k].split("/")[0],
+			mods: kidScores[i]["score" + k].split("/")[2] == undefined ? undefined : kidScores[i]["score" + k].split("/")[2].split(","),
+			hits: kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)}),
+			kid: kidScores[i].kid,
 			pulse: calculate(i, kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)})),
-			accuracy: calculate(i, kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)}), "accuracy")})
+			accuracy: calculate(i, kidScores[i]["score" + k].split("/")[1].split(",").map(function(item) {return parseFloat(item)}), "accuracy"),
+			warning: "",
+			html: {
+				pulse: "",
+				accuracy: "",
+				mods: ""
+			}
+			});
+			
+			let selectedScore = kidScores[i].scores[k];
+			let scoreTotalHits = selectedScore.hits.reduce((a, b) => {return a+b}, 0);
+			if (scoreTotalHits != kids[selectedScore.kid].notes) {
+				selectedScore.warning += "<br>This play does not line up with the amount of notes in this map." + `<br>(${scoreTotalHits} instead of ${kids[selectedScore.kid].notes})`;
+			}
 			
 			//mods
 			/*
@@ -108,7 +125,7 @@ async function initAll() {
 						finalString += `NR, `;
 					}
 					if (modArray[modIndex] == "hd") {
-						finalMult *= 1.00; //old: 1.01
+						//finalMult *= 1.01;
 						finalString += `HD, `;
 					}
 					if (modArray[modIndex] == "fl") {
@@ -116,26 +133,26 @@ async function initAll() {
 						finalString += `FL, `;
 					}
 				}
-				kidScores[i].scores[k].modMult = finalMult;
-				kidScores[i].scores[k].modExponent = finalExponent;
-				if (finalString == "") kidScores[i].scores[k].modInfo = "No Mods";
-				else kidScores[i].scores[k].modInfo = finalString.slice(0, finalString.length - 2);
+				selectedScore.modMult = finalMult;
+				selectedScore.modExponent = finalExponent;
+				if (finalString == "") selectedScore.modInfo = "No Mods";
+				else selectedScore.modInfo = finalString.slice(0, finalString.length - 2);
 			} else {
-				kidScores[i].scores[k].modMult = 1;
-				kidScores[i].scores[k].modExponent = 1;
-				kidScores[i].scores[k].modInfo = "";
+				selectedScore.modMult = 1;
+				selectedScore.modExponent = 1;
+				selectedScore.modInfo = "";
 			}
-			kidScores[i].scores[k].pulse *= kidScores[i].scores[k].modMult;
-			kidScores[i].scores[k].pulse **= kidScores[i].scores[k].modExponent;
+			selectedScore.pulse *= selectedScore.modMult;
+			selectedScore.pulse **= selectedScore.modExponent;
 			
 			let userNames = [];
 			for (let m = 0; m < users.length; m++) {
 				userNames.push(users[m].username);
 			};
-			if (!userNames.includes(kidScores[i].scores[k].username)) {
-				users.push({username: kidScores[i].scores[k].username, scores: [], pulse: 0});
+			if (!userNames.includes(selectedScore.username)) {
+				users.push({username: selectedScore.username, scores: [], pulse: 0});
 			};
-			users[users.findIndex(item => item.username === kidScores[i].scores[k].username)].scores.push(kidScores[i].scores[k]);
+			users[users.findIndex(item => item.username === selectedScore.username)].scores.push(selectedScore);
 			kidScores[i].scores.sort(function(a, b){return b.pulse - a.pulse});
 			//kidScores[i].scores.splice(-1, 9e9);
 		};
@@ -148,8 +165,9 @@ async function initAll() {
 	//kidOfTheDay = [randomEasyKidWeights[getWeightedIndex(randomEasyKidWeights, randomForDate(new Date()))][0], randomDifficultKidWeights[getWeightedIndex(randomDifficultKidWeights, randomForDate(new Date(), 1235845769))][0]];
 	for (let i = 0; i < users.length; i++) {
 		users[i].scores = users[i].scores.sort(function(a, b){return b.pulse - a.pulse});
-		for (let k = 0; k < users[i].scores.length && k < topPlayMults.length; k++) {
-			users[i].pulse += users[i].scores[k].pulse * topPlayMults[k];
+		for (let k = 0; k < users[i].scores.length; k++) {
+			let weightMult = topPlayMults[k] ?? 0.01;
+			users[i].pulse += users[i].scores[k].pulse * weightMult;
 		}
 	}
 	users = users.sort(function(a, b){return b.pulse - a.pulse})
@@ -213,16 +231,20 @@ function showUserProfile(targetUser) {
 	Pulse: ${typeof targetUser.pulse != "number" ? "???" : targetUser.pulse.toFixed(3)}p
 	`;
 	
-	let pendHTML = `<table><tr><th>Map</th><th>Difficulty</th><th>Accuracy</th><th>Pulse</th><th>Mods</th></tr>`;
+	let pendHTML = `<table><tr><th>#</th><th style="max-width:200px;">Map</th><th>Difficulty</th><th>Accuracy</th><th>Pulse</th><th>Mods</th></tr>`;
 	
-	for (let i = 0; i < targetUser.scores.length && i < topPlayMults.length; i++) {
-		let currentScore = targetUser.scores[i]
+	for (let i = 0; i < targetUser.scores.length && i < targetUser.scores.length; i++) {
+		let currentScore = targetUser.scores[i];
+		let weightMult = topPlayMults[i] ?? 0.01;
 		pendHTML += `
 		<tbody><tr>
-		<td>${kids[currentScore.kid].name}</td>
+		<td>${i+1}</td>
+		<td style="max-width:200px; word-break:break-word; cursor:pointer;"
+		class="hoverDark" onclick="showMapLeaderboard(${currentScore.kid}, false, true)"><b>${kids[currentScore.kid].name}</b></td>
 		<td style="${kids[currentScore.kid].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(kids[currentScore.kid].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(kids[currentScore.kid].difficulty + 1, 0)))][1]};">${kids[currentScore.kid].difficulty >= 0 ? kids[currentScore.kid].difficulty : "?"}</td>
 		<td class="has-tooltip" data-tooltip="Pulsus Accuracy: ${((currentScore.hits[0]*100+currentScore.hits[1]*100+currentScore.hits[2]*50+currentScore.hits[3]*20)/(kids[currentScore.kid].notes)).toFixed(3)}%" ${currentScore.hits[2]+currentScore.hits[3]+currentScore.hits[4] == 0 ? "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'" : (currentScore.hits[4] == 0 ? "style='color:yellow;'" : "")}>${(currentScore.accuracy * 100).toFixed(3)}%</td>
-		<td class="has-tooltip" data-tooltip="Weighted (${Math.round(topPlayMults[i]*100)}%): ${(currentScore.pulse * topPlayMults[i]).toFixed(3)}p">${currentScore.pulse.toFixed(3)}p</td>
+		<td class="has-tooltip" data-tooltip="Weighted (${Math.round(weightMult*100)}%): ${(currentScore.pulse * weightMult).toFixed(3)}p${currentScore.warning}"
+		${currentScore.warning == "" ? "" : "style='color:#FF8000;font-style:italic;'"}>${currentScore.pulse.toFixed(3)}p</td>
 		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + Math.round(currentScore.modMult * 1000)/1000 + "x)<sup>" + (currentScore.modExponent == 1 ? "" : Math.round(currentScore.modExponent * 1000)/1000) + "</sup>"}</td>
 		</tr></tbody>
 		`
@@ -242,9 +264,11 @@ function showMapLeaderboard(mapID, countingFilters = false, forceID = false) {
 		pendHTML += `
 		<tbody><tr>
 		<td>#${i+1}</td>
-		<td>${currentScore.username}</td>
+		<td style="cursor:pointer;" class="hoverDark" onclick='showUserProfile(${JSON.stringify(users[users.findIndex(v => v.username == currentScore.username)])})'><b>${currentScore.username}</b></td>
 		<td class="has-tooltip" data-tooltip="Pulsus Accuracy: ${((currentScore.hits[0]*100+currentScore.hits[1]*100+currentScore.hits[2]*50+currentScore.hits[3]*20)/(kids[currentScore.kid].notes)).toFixed(3)}%" ${currentScore.hits[2]+currentScore.hits[3]+currentScore.hits[4] == 0 ? "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'" : (currentScore.hits[4] == 0 ? "style='color:yellow;'" : "")}>${(currentScore.accuracy * 100).toFixed(3)}%</td>
-		<td>${currentScore.pulse.toFixed(3)}p</td>
+		<td ${currentScore.warning == "" ? "" : "class='has-tooltip' data-tooltip='" + currentScore.warning.replace("<br>", "") + "' style='color:#FF8000;font-style:italic;'"}>
+			${currentScore.pulse.toFixed(3)}p
+		</td>
 		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + Math.round(currentScore.modMult * 1000)/1000 + "x)<sup>" + (currentScore.modExponent == 1 ? "" : Math.round(currentScore.modExponent * 1000)/1000) + "</sup>"}</td>
 		</tr></tbody>`
 	};
@@ -254,3 +278,19 @@ function showMapLeaderboard(mapID, countingFilters = false, forceID = false) {
 	
 	document.getElementById("mapLeaderboardText").scrollIntoView({behavior: "smooth"});
 };
+
+function countAllWarnings() {
+	let result = 0;
+	let resultNames = [];
+	for (let i = 0; i < kidScores.length; i++) {
+		for (let k = 0; k < kidScores[i].scores.length; k++) {
+			if (kidScores[i].scores[k].warning != "") {
+				result++;
+				resultNames.push(kids[i].name + ` // ${kidScores[i].scores[k].hits.reduce((a, b) => {return a+b}, 0)} instead of ${kids[i].notes}`);
+				console.log(kidScores[i].scores[k]);
+			}
+		}
+	}
+	console.log(resultNames.sort((a, b) => a.localeCompare(b)));
+	return result;
+}
