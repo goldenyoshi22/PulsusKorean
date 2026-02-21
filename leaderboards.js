@@ -42,6 +42,10 @@ function calculate(kid, hits, type = "pulse", forceAcc = false) {
 		case "accuracy":
 		return acc;
 		break;
+		
+		case "pulsusAccuracy":
+		return (hits[0] + hits[1] + hits[2]*0.5 + hits[3]*0.2) / notes
+		break;
 	}
 	//this below is severely ourdated dont worry about it lol
 	//KP = ((5 * ((1.4 ^ diff) * (min(notes,3737) ^ 0.1))) ^ (acc/100)) * min(notes/500, 1)

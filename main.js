@@ -1,24 +1,26 @@
 var difficultyColors = [
-["#000000", "#0000ff"], //-1, replaced with "?" and used as a placeholder diff if a map is either a complete joke or not currently rated in difficulty
-["#4a86e8", "#000000"], //0
-["#00ffff", "#000000"], //1
-["#00ff00", "#000000"], //2
-["#ffff00", "#000000"], //3
-["#ff9900", "#000000"], //4
-["#ff0000", "#000000"], //5
-["#ff00ff", "#000000"], //6
-["#9900ff", "#000000"], //7
-["#0000ff", "#000000"], //8
-["#3d85c6", "#000000"], //9
-["#c9daf8", "#000000"], //10
-["#000000", "#c9daf8"], //11
-["#000000", "#3d85c6"], //12
-["#000000", "#0000ff"], //13
-["#000000", "#9900ff"], //14
-["#000000", "#ff00ff"], //15
-["#000000", "#ff0000"], //16
-["#000000", "#666666"], //17
-]
+	["#000000", "#0000ff"], //-1, replaced with "?" and used as a placeholder diff if a map is either a complete joke or not currently rated in difficulty
+	["#4a86e8", "#000000"], //0
+	["#00ffff", "#000000"], //1
+	["#00ff00", "#000000"], //2
+	["#ffff00", "#000000"], //3
+	["#ff9900", "#000000"], //4
+	["#ff0000", "#000000"], //5
+	["#ff00ff", "#000000"], //6
+	["#9900ff", "#000000"], //7
+	["#0000ff", "#000000"], //8
+	["#3d85c6", "#000000"], //9
+	["#c9daf8", "#000000"], //10
+	["#000000", "#c9daf8"], //11
+	["#000000", "#3d85c6"], //12
+	["#000000", "#0000ff"], //13
+	["#000000", "#9900ff"], //14
+	["#000000", "#ff00ff"], //15
+	["#000000", "#ff0000"], //16
+	["#000000", "#666666"], //17
+];
+
+var judgementColors = ["#C800FF", "#00AFFF", "#00FF00", "#FFAF00", "#FF0000"];
 
 function filterDifficultyNum(n) {
 	if (typeof n == "number" && !isNaN(n)) {
@@ -99,7 +101,9 @@ async function initAll() {
 				for (let modIndex = 0; modIndex < modArray.length; modIndex++) {
 					if (modArray[modIndex].startsWith("bpm")) {
 						let bpmMod = modArray[modIndex].slice(3);
-						if (bpmMod >= 1) finalMult *= bpmMod;
+						//if (bpmMod >= 1) finalMult *= bpmMod;
+						if (bpmMod >= 1) finalMult *= (bpmMod ** 1.25)
+						
 						//else finalMult *= ((5 ** bpmMod) / 5);
 						else finalExponent = 1 - (1 - bpmMod)/2;
 						finalString += `BPM ${bpmMod}x, `
@@ -145,6 +149,18 @@ async function initAll() {
 			selectedScore.pulse *= selectedScore.modMult;
 			selectedScore.pulse **= selectedScore.modExponent;
 			
+			let tooltip = `Pulsus Accuracy: ${(calculate(selectedScore.kid, selectedScore.hits, "pulsusAccuracy") * 100).toFixed(3)}%`;
+			tooltip += `<br>[`;
+			for (let m = 0; m < selectedScore.hits.length; m++) {
+				tooltip += `<span style='color:${judgementColors[m]}'>${selectedScore.hits[m]}</span>, `;
+			}
+			tooltip = tooltip.slice(0, tooltip.length - 2);
+			tooltip += `]`;
+			
+			selectedScore.html.accuracy = `<td class="has-tooltip" data-tooltip="${tooltip}" ${selectedScore.hits[2]+selectedScore.hits[3]+selectedScore.hits[4] == 0 ? "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'" : (selectedScore.hits[4] == 0 ? "style='color:yellow;'" : "")}>${(selectedScore.accuracy * 100).toFixed(3)}%</td>`;
+			selectedScore.html.pulse = `<td ${selectedScore.warning == "" ? "" : "class='has-tooltip' data-tooltip='" + selectedScore.warning.replace("<br>", "") + "' style='color:#FF8000;font-style:italic;'"}>
+			${selectedScore.pulse.toFixed(3)}p</td>`;
+			
 			let userNames = [];
 			for (let m = 0; m < users.length; m++) {
 				userNames.push(users[m].username);
@@ -173,7 +189,7 @@ async function initAll() {
 	users = users.sort(function(a, b){return b.pulse - a.pulse})
 	for (let i = 0; i < users.length; i++) {
 		users[i].rank = i+1;
-		document.getElementById("leaderboardTable").innerHTML += `<tr><td>#${i + 1}</td><td><b style="cursor:pointer;" onclick='showUserProfile(${JSON.stringify(users[i])})'>${users[i].username}</b></td><td>${users[i].pulse.toFixed(3)}p</td>
+		document.getElementById("leaderboardTable").innerHTML += `<tr><td>#${i + 1}</td><td><b style="cursor:pointer;" onclick='showUserProfile(${i})'>${users[i].username}</b></td><td>${users[i].pulse.toFixed(3)}p</td>
 		<td>${kids[users[i].scores[0].kid].name} ${users[i].scores[0].modInfo == "" ? "" : "[" + users[i].scores[0].modInfo + "]"} ~ ${users[i].scores[0].pulse.toFixed(3)}p (${(users[i].scores[0].accuracy * 100).toFixed(3)}%)</td></tr>`
 	};
 	document.querySelectorAll("[onclick]").forEach(function(element) {
@@ -181,17 +197,32 @@ async function initAll() {
 	});
 }
 
+var req = 0;
 function initAwardedMaps(filtering = false) {
+	cancelAnimationFrame(req);
 	let usingKids = filtering ? filteredKids : sortedKids;
-	document.getElementById("awardedMapsTable").innerHTML = `
-	<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`;
-	for (let i = 0; i < usingKids.length; i++) {
-		document.getElementById("awardedMapsTable").innerHTML += `<tr><td class="has-tooltip" data-tooltip="KID: ${usingKids[i].kid}">${usingKids[i].id}</td><td style="cursor:pointer;" class="hoverDark" onclick="showMapLeaderboard(${i}, ${filtering})"><b>${usingKids[i].name}</b></td><td>${usingKids[i].author}</td>
-		<td style="${usingKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][1]};">${usingKids[i].difficulty >= 0 ? usingKids[i].difficulty : "?"}</td>
-		<td class="has-tooltip" data-tooltip="Others: ${usingKids[i].skill2.replaceAll(" ", ", ")}">${usingKids[i].skill}</td>
-		<td>${isNaN(usingKids[i].notes) ? "?" : usingKids[i].notes}</td></tr>`;
-	};
+	document.getElementById("awardedMapsTable").innerHTML = `<tr>
+		<th class="hoverDark" style="cursor:pointer;" onclick="sortKids('id'); bigBoyFilter(); initAwardedMaps(true);">ID</th>
+		<th class="hoverDark" style="cursor:pointer;" onclick="sortKids('title'); bigBoyFilter(); initAwardedMaps(true);">Title</th>
+		<th class="hoverDark" style="cursor:pointer;" onclick="sortKids('author'); bigBoyFilter(); initAwardedMaps(true);">Author</th>
+		<th class="hoverDark" style="cursor:pointer;" onclick="sortKids('difficulty'); bigBoyFilter(); initAwardedMaps(true);">Difficulty</th>
+		<th class="hoverDark" style="cursor:pointer;" onclick="sortKids('skillset'); bigBoyFilter(); initAwardedMaps(true);">Skillset</th>
+		<th class="hoverDark" style="cursor:pointer;" onclick="sortKids('notes'); bigBoyFilter(); initAwardedMaps(true);">Notes</th>
+	</tr>`;
+	miniInit(usingKids, 0, filtering, false);
 };
+
+function miniInit(usingKids, startI, filtering = false) {
+	for (miniInitJ = startI; miniInitJ < usingKids.length && miniInitJ < startI + 15; miniInitJ++) {
+		document.getElementById("awardedMapsTable").innerHTML += `<tr><td class="has-tooltip" data-tooltip="KID: ${usingKids[miniInitJ].kid}">${usingKids[miniInitJ].id}</td><td style="cursor:pointer;" class="hoverDark" onclick="showMapLeaderboard(${miniInitJ}, ${filtering})"><b>${usingKids[miniInitJ].name}</b></td><td>${usingKids[miniInitJ].author}</td>
+		<td style="${usingKids[miniInitJ].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[miniInitJ].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[miniInitJ].difficulty + 1, 0)))][1]};">${usingKids[miniInitJ].difficulty >= 0 ? usingKids[miniInitJ].difficulty : "?"}</td>
+		<td class="has-tooltip" data-tooltip="Others: ${usingKids[miniInitJ].skill2.join(', ')}">${usingKids[miniInitJ].skill}</td>
+		<td>${isNaN(usingKids[miniInitJ].notes) ? "?" : usingKids[miniInitJ].notes}</td></tr>`;
+	}
+	if (miniInitJ < usingKids.length) {
+		req = requestAnimationFrame((t) => miniInit(usingKids, miniInitJ, filtering));
+	}
+}
 
 function initDailyMap() {
 	let usingKids = [kids[kidOfTheDay[0]], kids[kidOfTheDay[1]], kids[kidOfTheDay[2]]];
@@ -200,7 +231,7 @@ function initDailyMap() {
 	for (let i = 0; i < usingKids.length; i++) {
 		document.getElementById("mapOfTheDay").innerHTML += `<tr><td class="has-tooltip" data-tooltip="KID: ${usingKids[i].kid}">${usingKids[i].id}</td><td style="cursor:pointer;" onclick="showMapLeaderboard(${usingKids[i].kid}, false, true)"><b>${usingKids[i].name}</b></td><td>${usingKids[i].author}</td>
 			<td style="${usingKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][1]};">${usingKids[i].difficulty >= 0 ? usingKids[i].difficulty : "?"}</td>
-			<td class="has-tooltip" data-tooltip="Others: ${usingKids[i].skill2.replaceAll(" ", ", ")}">${usingKids[i].skill}</td>
+			<td class="has-tooltip" data-tooltip="Others: ${usingKids[i].skill2.join(", ")}">${usingKids[i].skill}</td>
 			<td>${isNaN(usingKids[i].notes) ? "?" : usingKids[i].notes}</td></tr>
 		`;
 	}
@@ -225,6 +256,7 @@ initAll();
 function showUserProfile(targetUser) {
 	console.log(targetUser);
 	if (typeof targetUser == "string") targetUser = JSON.parse(targetUser);
+	if (typeof targetUser == "number") targetUser = users[targetUser];
 	
 	document.getElementById("profileInfo").innerHTML = `
 	<h3>${targetUser.username} - #${targetUser.rank}</h3>
@@ -242,9 +274,8 @@ function showUserProfile(targetUser) {
 		<td style="max-width:200px; word-break:break-word; cursor:pointer;"
 		class="hoverDark" onclick="showMapLeaderboard(${currentScore.kid}, false, true)"><b>${kids[currentScore.kid].name}</b></td>
 		<td style="${kids[currentScore.kid].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(kids[currentScore.kid].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(kids[currentScore.kid].difficulty + 1, 0)))][1]};">${kids[currentScore.kid].difficulty >= 0 ? kids[currentScore.kid].difficulty : "?"}</td>
-		<td class="has-tooltip" data-tooltip="Pulsus Accuracy: ${((currentScore.hits[0]*100+currentScore.hits[1]*100+currentScore.hits[2]*50+currentScore.hits[3]*20)/(kids[currentScore.kid].notes)).toFixed(3)}%" ${currentScore.hits[2]+currentScore.hits[3]+currentScore.hits[4] == 0 ? "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'" : (currentScore.hits[4] == 0 ? "style='color:yellow;'" : "")}>${(currentScore.accuracy * 100).toFixed(3)}%</td>
-		<td class="has-tooltip" data-tooltip="Weighted (${Math.round(weightMult*100)}%): ${(currentScore.pulse * weightMult).toFixed(3)}p${currentScore.warning}"
-		${currentScore.warning == "" ? "" : "style='color:#FF8000;font-style:italic;'"}>${currentScore.pulse.toFixed(3)}p</td>
+		${currentScore.html.accuracy}
+		${currentScore.html.pulse}
 		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + Math.round(currentScore.modMult * 1000)/1000 + "x)<sup>" + (currentScore.modExponent == 1 ? "" : Math.round(currentScore.modExponent * 1000)/1000) + "</sup>"}</td>
 		</tr></tbody>
 		`
@@ -264,11 +295,9 @@ function showMapLeaderboard(mapID, countingFilters = false, forceID = false) {
 		pendHTML += `
 		<tbody><tr>
 		<td>#${i+1}</td>
-		<td style="cursor:pointer;" class="hoverDark" onclick='showUserProfile(${JSON.stringify(users[users.findIndex(v => v.username == currentScore.username)])})'><b>${currentScore.username}</b></td>
-		<td class="has-tooltip" data-tooltip="Pulsus Accuracy: ${((currentScore.hits[0]*100+currentScore.hits[1]*100+currentScore.hits[2]*50+currentScore.hits[3]*20)/(kids[currentScore.kid].notes)).toFixed(3)}%" ${currentScore.hits[2]+currentScore.hits[3]+currentScore.hits[4] == 0 ? "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'" : (currentScore.hits[4] == 0 ? "style='color:yellow;'" : "")}>${(currentScore.accuracy * 100).toFixed(3)}%</td>
-		<td ${currentScore.warning == "" ? "" : "class='has-tooltip' data-tooltip='" + currentScore.warning.replace("<br>", "") + "' style='color:#FF8000;font-style:italic;'"}>
-			${currentScore.pulse.toFixed(3)}p
-		</td>
+		<td style="cursor:pointer;" class="hoverDark" onclick='showUserProfile(${users.findIndex(v => v.username == currentScore.username)})'><b>${currentScore.username}</b></td>
+		${currentScore.html.accuracy}
+		${currentScore.html.pulse}
 		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + Math.round(currentScore.modMult * 1000)/1000 + "x)<sup>" + (currentScore.modExponent == 1 ? "" : Math.round(currentScore.modExponent * 1000)/1000) + "</sup>"}</td>
 		</tr></tbody>`
 	};

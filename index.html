@@ -5,12 +5,12 @@
 		<link rel="icon" href=""/>
 		<title>Pulsus Korean (or is it?) Server</title>
 		<link rel="stylesheet" href="style.css?v=07-20-2025-4"/>
-		<script src="kids.js?v=07-20-2025-4"></script>
-		<script src="leaderboards.js?v=07-20-2025-4"></script>
-		<script src="main.js?v=02-13-2026-1" defer></script>
+		<script src="kids.js?v=02-21-2026-1"></script>
+		<script src="leaderboards.js?v=02-21-2026-1"></script>
+		<script src="main.js?v=02-21-2026-1" defer></script>
 	</head>
 	<body>
-	<span style="position:sticky;font-size:10px;top:0;color:#FFFFFF80;">Last updated Feb 13 2026 - small QoL things</span>
+	<span style="position:sticky;font-size:10px;top:0;color:#FFFFFF80;">Last updated Feb 21 2026 - QoL and bpm+ rework</span>
 	<center>
 		<div id="tooltip" class="tooltip"></div>
 		<h1>Welcome to the Pulsus Korean <s>Private</s> Public Server!</h1><span style="font-size:8px;">is this really korean?</span><br>
@@ -33,9 +33,9 @@
 				<th><input id="filterTitleInput" type="text" placeholder="🔍 by title..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input></th>
 				<th><input id="filterAuthorInput" type="text" placeholder="🔍 by author..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input></th>
 				<th>
-					<input style="display:inline-block; width:5em;" id="filterDifficultyMinInput" type="number" min="-1" max="18" placeholder="Min. Diff..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input>
+					<input style="display:inline-block; width:5em;" id="filterDifficultyMinInput" type="number" min="-1" max="17.5" step="0.5" placeholder="Min. Diff..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input>
 					-
-					<input style="display:inline-block; width:5em;" id="filterDifficultyMaxInput" type="number" min="-1" max="18" placeholder="Max. Diff..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input>
+					<input style="display:inline-block; width:5em;" id="filterDifficultyMaxInput" type="number" min="-1" max="17.5" step="0.5" placeholder="Max. Diff..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input>
 				</th>
 				<th><input id="filterSkillsetInput" type="text" placeholder="🔍 by skillset..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input></th><th>
 					<input style="display:inline-block; width:5em;" id="filterNotesMinInput" type="number" placeholder="Min. Notes..." oninput="bigBoyFilter(); initAwardedMaps(true);"></input>
@@ -46,12 +46,12 @@
 		</table>
 		<table id="awardedMapsTable">
 			<tr>
-				<th>ID</th>
-				<th>Title</th>
-				<th>Author</th>
-				<th>Difficulty</th>
-				<th>Skillset</th>
-				<th>Notes</th>
+				<th class="hoverDark" onclick="sortKids('id'); initAwardedMaps();">ID</th>
+				<th class="hoverDark" onclick="sortKids('title'); initAwardedMaps();">Title</th>
+				<th class="hoverDark" onclick="sortKids('author'); initAwardedMaps();">Author</th>
+				<th class="hoverDark" onclick="sortKids('difficulty'); initAwardedMaps();">Difficulty</th>
+				<th class="hoverDark" onclick="sortKids('skillset'); initAwardedMaps();">Skillset</th>
+				<th class="hoverDark" onclick="sortKids('notes'); initAwardedMaps();">Notes</th>
 			</tr>
 		</table><br><br>
 		<h3 id="mapLeaderboardText">Map Leaderboard</h3><br>

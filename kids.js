@@ -16,7 +16,8 @@ function sheetsToKids() {
 				"id": parseInt(data.values[i][4] ?? -1),
 				"author": data.values[i][5] ?? "",
 				"notes": parseInt(data.values[i][6] ?? -1),
-				"skill2": data.values[i][7] ?? ""
+				"skill2": (data.values[i][7] ?? "").split(";"),
+				"curve": data.values[i][8] ?? ""
 			})
 		} 
 	}).then(kids => {
@@ -54,9 +55,27 @@ async function sortKids(method) {
 		sortedKids = kids.toSorted(function(a, b) {return a.notes - b.notes});
 		break;
 		
+		case "id":
+		sortedKids = kids.toSorted(function(a, b) {return a.id - b.id});
+		break;
+		
+		case "kid":
+		sortedKids = kids.toSorted(function(a, b) {return a.kid - b.kid});
+		break;
+		
 		case "skillset":
 		sortedKids = kids.toSorted(function(a, b) {return a.difficulty - b.difficulty});
 		sortedKids.sort(function(a, b) {return a.skill.localeCompare(b.skill)});
+		break;
+		
+		case "title":
+		sortedKids = kids.toSorted(function(a, b) {return a.difficulty - b.difficulty});
+		sortedKids.sort(function(a, b) {return a.name.localeCompare(b.name)});
+		break;
+		
+		case "author":
+		sortedKids = kids.toSorted(function(a, b) {return a.difficulty - b.difficulty});
+		sortedKids.sort(function(a, b) {return a.author.localeCompare(b.author)});
 		break;
 	}
 }
@@ -90,7 +109,15 @@ async function filterMaps(filtering = []) {
 			break;
 			
 			case "skillset":
-				filteredKids = filteredKids.filter((kid) => kid.skill.toLowerCase().includes(filtering[i][1].toLowerCase()) || kid.skill2.toLowerCase().includes(filtering[i][1].toLowerCase()));
+				filteredKids = filteredKids.filter((kid) => {
+				let skill2include = false;
+				for (let k = 0; k < kid.skill2.length; k++) {
+					if (kid.skill2[k].toLowerCase().includes(filtering[i][1].toLowerCase())) {
+						skill2include = true;
+						return true;
+					}
+				}
+				return kid.skill.toLowerCase().includes(filtering[i][1].toLowerCase()) || skill2include});
 			break;
 			
 			case "notes":
