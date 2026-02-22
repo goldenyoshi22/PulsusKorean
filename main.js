@@ -61,7 +61,8 @@ async function initAll() {
 			html: {
 				pulse: "",
 				accuracy: "",
-				mods: ""
+				mods: "",
+				profilePulse: ""
 			}
 			});
 			
@@ -160,6 +161,10 @@ async function initAll() {
 			selectedScore.html.accuracy = `<td class="has-tooltip" data-tooltip="${tooltip}" ${selectedScore.hits[2]+selectedScore.hits[3]+selectedScore.hits[4] == 0 ? "style='background:-webkit-linear-gradient(left, #66CFFF, #DE66FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'" : (selectedScore.hits[4] == 0 ? "style='color:yellow;'" : "")}>${(selectedScore.accuracy * 100).toFixed(3)}%</td>`;
 			selectedScore.html.pulse = `<td ${selectedScore.warning == "" ? "" : "class='has-tooltip' data-tooltip='" + selectedScore.warning.replace("<br>", "") + "' style='color:#FF8000;font-style:italic;'"}>
 			${selectedScore.pulse.toFixed(3)}p</td>`;
+			selectedScore.html.profilePulse = `<td class='has-tooltip' data-tooltip='Weighted ($WR$%): $WP$p${selectedScore.warning}' ${selectedScore.warning == "" ? "" : "style='color:#FF8000;font-style:italic;'"}>
+			${selectedScore.pulse.toFixed(3)}p</td>`;
+			//$WR$ -> ${Math.round(weightMult*100)}
+			//$WP$ -> ${(currentScore.pulse * weightMult).toFixed(3)}
 			
 			let userNames = [];
 			for (let m = 0; m < users.length; m++) {
@@ -275,7 +280,7 @@ function showUserProfile(targetUser) {
 		class="hoverDark" onclick="showMapLeaderboard(${currentScore.kid}, false, true)"><b>${kids[currentScore.kid].name}</b></td>
 		<td style="${kids[currentScore.kid].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(kids[currentScore.kid].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(kids[currentScore.kid].difficulty + 1, 0)))][1]};">${kids[currentScore.kid].difficulty >= 0 ? kids[currentScore.kid].difficulty : "?"}</td>
 		${currentScore.html.accuracy}
-		${currentScore.html.pulse}
+		${currentScore.html.profilePulse.replace("$WR$", Math.round(weightMult*100)).replace("$WP$", (currentScore.pulse*weightMult).toFixed(3))}
 		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + Math.round(currentScore.modMult * 1000)/1000 + "x)<sup>" + (currentScore.modExponent == 1 ? "" : Math.round(currentScore.modExponent * 1000)/1000) + "</sup>"}</td>
 		</tr></tbody>
 		`
