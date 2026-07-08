@@ -43,6 +43,10 @@ table {
 .info { grid-area: info; }
 .scores { grid-area: scores; }
 
+.hoverDark {
+	isolation: isolate;
+}
+
 .hoverDark:hover {
 	filter: brightness(80%);
 }

@@ -220,8 +220,9 @@ function initAwardedMaps(filtering = false) {
 function miniInit(usingKids, startI, filtering = false) {
 	for (miniInitJ = startI; miniInitJ < usingKids.length && miniInitJ < startI + 15; miniInitJ++) {
 		let currentKid = usingKids[miniInitJ];
-		document.getElementById("awardedMapsTable").innerHTML += `<tr><td class="has-tooltip" data-tooltip="KID: ${currentKid.kid}">${currentKid.id}</td><td style="cursor:pointer;" class="hoverDark" onclick="showMapLeaderboard(${miniInitJ}, ${filtering})"><b>${currentKid.name}</b></td><td>${currentKid.author}</td>
-		<td ${currentKid.foon ? "class='has-tooltip' data-tooltip='This is a joke map, have fun and don&#39;t take it seriously! (^^)'" : ""} style="position:relative;${currentKid.difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(currentKid.difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(currentKid.difficulty + 1, 0)))][1]};">${currentKid.difficulty >= 0 ? currentKid.difficulty : "?"}<span style="font-size:75%;position:absolute; top:2px;right:4px;">${currentKid.foon ? "(^^)" : ""}</span></td>
+		document.getElementById("awardedMapsTable").innerHTML += `<tr><td class="has-tooltip" data-tooltip="KID: ${currentKid.kid}">${currentKid.id}</td><td style="cursor:pointer;" class="hoverDark" onclick="showMapLeaderboard(${miniInitJ}, ${filtering})"><b>${currentKid.name}</b></td>
+		<td>${currentKid.author}</td>
+		<td ${currentKid.foon ? "class='has-tooltip' data-tooltip='This is a joke map, have fun and don&#39;t take it seriously! (^^)'" : ""} style="position:relative;${currentKid.difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(currentKid.difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(currentKid.difficulty + 1, 0)))][1]};">${currentKid.difficulty >= 0 ? currentKid.difficulty : "?"}<span style="font-size:75%;position:absolute; top:2px;right:4px;pointer-events:none;">${currentKid.foon ? "(^^)" : ""}</span></td>
 		<td class="has-tooltip" data-tooltip="Others: ${currentKid.skill2.join(', ')}">${currentKid.skill}</td>
 		<td>${isNaN(currentKid.notes) ? "?" : currentKid.notes}</td></tr>`;
 	}
