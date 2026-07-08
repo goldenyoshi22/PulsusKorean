@@ -219,10 +219,11 @@ function initAwardedMaps(filtering = false) {
 
 function miniInit(usingKids, startI, filtering = false) {
 	for (miniInitJ = startI; miniInitJ < usingKids.length && miniInitJ < startI + 15; miniInitJ++) {
-		document.getElementById("awardedMapsTable").innerHTML += `<tr><td class="has-tooltip" data-tooltip="KID: ${usingKids[miniInitJ].kid}">${usingKids[miniInitJ].id}</td><td style="cursor:pointer;" class="hoverDark" onclick="showMapLeaderboard(${miniInitJ}, ${filtering})"><b>${usingKids[miniInitJ].name}</b></td><td>${usingKids[miniInitJ].author}</td>
-		<td style="${usingKids[miniInitJ].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[miniInitJ].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[miniInitJ].difficulty + 1, 0)))][1]};">${usingKids[miniInitJ].difficulty >= 0 ? usingKids[miniInitJ].difficulty : "?"}</td>
-		<td class="has-tooltip" data-tooltip="Others: ${usingKids[miniInitJ].skill2.join(', ')}">${usingKids[miniInitJ].skill}</td>
-		<td>${isNaN(usingKids[miniInitJ].notes) ? "?" : usingKids[miniInitJ].notes}</td></tr>`;
+		let currentKid = usingKids[miniInitJ];
+		document.getElementById("awardedMapsTable").innerHTML += `<tr><td class="has-tooltip" data-tooltip="KID: ${currentKid.kid}">${currentKid.id}</td><td style="cursor:pointer;" class="hoverDark" onclick="showMapLeaderboard(${miniInitJ}, ${filtering})"><b>${currentKid.name}</b></td><td>${currentKid.author}</td>
+		<td ${currentKid.foon ? "class='has-tooltip' data-tooltip='This is a joke map, have fun and don&#39;t take it seriously! (^^)'" : ""} style="position:relative;${currentKid.difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(currentKid.difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(currentKid.difficulty + 1, 0)))][1]};">${currentKid.difficulty >= 0 ? currentKid.difficulty : "?"}<span style="font-size:75%;position:absolute; top:2px;right:4px;">${currentKid.foon ? "(^^)" : ""}</span></td>
+		<td class="has-tooltip" data-tooltip="Others: ${currentKid.skill2.join(', ')}">${currentKid.skill}</td>
+		<td>${isNaN(currentKid.notes) ? "?" : currentKid.notes}</td></tr>`;
 	}
 	if (miniInitJ < usingKids.length) {
 		req = requestAnimationFrame((t) => miniInit(usingKids, miniInitJ, filtering));
@@ -235,7 +236,7 @@ function initDailyMap() {
 	<tr><th>ID</th><th>Title</th><th>Author</th><th>Difficulty</th><th>Skillset</th><th>Notes</th></tr>`;
 	for (let i = 0; i < usingKids.length; i++) {
 		document.getElementById("mapOfTheDay").innerHTML += `<tr><td class="has-tooltip" data-tooltip="KID: ${usingKids[i].kid}">${usingKids[i].id}</td><td style="cursor:pointer;" onclick="showMapLeaderboard(${usingKids[i].kid}, false, true)"><b>${usingKids[i].name}</b></td><td>${usingKids[i].author}</td>
-			<td style="${usingKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][1]};">${usingKids[i].difficulty >= 0 ? usingKids[i].difficulty : "?"}</td>
+			<td ${usingKids[i].foon ? "class='has-tooltip' data-tooltip='This is a joke map, have fun and don&#39;t take it seriously! (^^)'" : ""} style="position:relative;${usingKids[i].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(usingKids[i].difficulty + 1, 0)))][1]};">${usingKids[i].difficulty >= 0 ? usingKids[i].difficulty : "?"}<span style="font-size:75%;position:absolute; top:2px;right:4px;">${usingKids[i].foon ? "(^^)" : ""}</span></td>
 			<td class="has-tooltip" data-tooltip="Others: ${usingKids[i].skill2.join(", ")}">${usingKids[i].skill}</td>
 			<td>${isNaN(usingKids[i].notes) ? "?" : usingKids[i].notes}</td></tr>
 		`;
@@ -278,7 +279,7 @@ function showUserProfile(targetUser) {
 		<td>${i+1}</td>
 		<td style="max-width:200px; word-break:break-word; cursor:pointer;"
 		class="hoverDark" onclick="showMapLeaderboard(${currentScore.kid}, false, true)"><b>${kids[currentScore.kid].name}</b></td>
-		<td style="${kids[currentScore.kid].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(kids[currentScore.kid].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(kids[currentScore.kid].difficulty + 1, 0)))][1]};">${kids[currentScore.kid].difficulty >= 0 ? kids[currentScore.kid].difficulty : "?"}</td>
+		<td ${kids[currentScore.kid].foon ? "class='has-tooltip' data-tooltip='This is a joke map, have fun and don&#39;t take it seriously! (^^)'" : ""} style="position:relative;${kids[currentScore.kid].difficulty >= 17 ? "font-style:italic;text-decoration:underline line-through;" : ""}background-color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(kids[currentScore.kid].difficulty + 1, 0)))][0]};color:${difficultyColors[filterDifficultyNum(Math.floor(Math.max(kids[currentScore.kid].difficulty + 1, 0)))][1]};">${kids[currentScore.kid].difficulty >= 0 ? kids[currentScore.kid].difficulty : "?"}<span style="font-size:75%;position:absolute; top:2px;right:4px;">${kids[currentScore.kid].foon ? "(^^)" : ""}</span></td>
 		${currentScore.html.accuracy}
 		${currentScore.html.profilePulse.replace("$WR$", Math.round(weightMult*100)).replace("$WP$", (currentScore.pulse*weightMult).toFixed(3))}
 		<td>${currentScore.modInfo} ${currentScore.modInfo == "" ? "None" : "(" + Math.round(currentScore.modMult * 1000)/1000 + "x)<sup>" + (currentScore.modExponent == 1 ? "" : Math.round(currentScore.modExponent * 1000)/1000) + "</sup>"}</td>

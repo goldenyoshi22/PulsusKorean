@@ -17,7 +17,8 @@ function sheetsToKids() {
 				"author": data.values[i][5] ?? "",
 				"notes": parseInt(data.values[i][6] ?? -1),
 				"skill2": (data.values[i][7] ?? "").split(";"),
-				"curve": data.values[i][8] ?? ""
+				"foon": (data.values[i][8] ?? "FALSE").toLowerCase() === "true",
+				"curve": data.values[i][9] ?? ""
 			})
 		} 
 	}).then(kids => {
